@@ -1,0 +1,14 @@
+{
+  "tailwindCSS.experimental.classRegex": [
+    ["(?:text|bg|border|from|to|hover:bg|focus:border)-\\[var\\(--color-[^\\]]+\\)\\]", ""]
+  ],
+  "tailwindCSS.suggestions": true,
+  "tailwindCSS.validate": true,
+  "css.lint.unknownAtRules": "ignore",
+  "tailwindCSS.lint.invalidApply": "ignore",
+  "tailwindCSS.lint.invalidConfigPath": "ignore",
+  "tailwindCSS.lint.invalidScreen": "ignore",
+  "tailwindCSS.lint.invalidTailwindDirective": "ignore",
+  "tailwindCSS.lint.invalidVariant": "ignore",
+  "tailwindCSS.lint.recommendedVariantOrder": "ignore"
+}
