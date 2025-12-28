@@ -1,23 +1,44 @@
+# Dependencies
 node_modules
-.next
 node_modules.next
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Build & Output
+.next
 dist
 build
+out
+.turbo
+.vercel
 
 # Environment variables
 .env
 .env.local
 .env.*.local
+.env.production.local
 
-# IDE specific
+# IDE & Editor
 .vscode
 .idea
-.DS_Store
+.vs
+*.code-workspace
 *.swp
 *.swo
+*~
+.DS_Store
+Thumbs.db
 
-# Vercel
-.vercel
+# Firebase
+firebase-debug.log
+.firebase
+.firebaserc
+firebase.json
+.runtimeconfig.json
+functions/node_modules
+functions/lib
+functions/.env.local
 
 # Logs
 logs
@@ -25,11 +46,94 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# OS
-Thumbs.db
-
-# Package manager
+lerna-debug.log*
 pnpm-debug.log*
-yarn.lock
-package-lock.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Testing
+coverage
+.nyc_output
+.jest_cache
+*.lcov
+
+# Cache
+.cache
+.eslintcache
+.stylelintcache
+
+# OS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Development
+.env.development.local
+.env.test.local
+
+# Nextjs
+.next/
+out/
+.nx
+*.tsbuildinfo
+
+# IDE plugins cache
+.idea/shelf
+.idea/workspace.xml
+.idea/modules.xml
+.idea/dictionaries
+
+# VS Code extensions
+.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime
+.sublime-workspace
+.sublime-project
+
+# Vim
+.vim/
+*.vim
+Session.vim
+
+# emacs
+*~
+\#*
+.\#*
+
+# MacOS
+.AppleDouble
+.LSOverride
+
+# Node Version Manager
+.nvmrc
+.nvm
+
+# NPM
+npm-error.log
+
+# Build artifacts
+dist/
+build/
+.cache/
+coverage/
+
+# Temp files
+tmp/
+temp/
+*.tmp

@@ -1,0 +1,85 @@
+// Firebase Security Rules for Firestore
+// This file contains security rules to protect your data
+// Deploy these rules to Firebase Console > Firestore > Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the resource
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // USERS COLLECTION
+    // Users can only read/write their own document
+    match /users/{userId} {
+      allow read: if isAuth() && isOwner(userId);
+      allow create: if isAuth() && isOwner(userId);
+      allow update: if isAuth() && isOwner(userId);
+      allow delete: if isAuth() && isOwner(userId);
+    }
+    
+    // PROPERTIES COLLECTION
+    // Anyone can read properties (public listing)
+    // Only authenticated users can create
+    // Only property owner (agentId) can update/delete
+    match /properties/{propertyId} {
+      allow read: if true; // Public read access
+      allow create: if isAuth();
+      allow update: if isAuth() && (
+        resource.data.agentId == request.auth.uid || 
+        request.auth.token.admin == true
+      );
+      allow delete: if isAuth() && (
+        resource.data.agentId == request.auth.uid || 
+        request.auth.token.admin == true
+      );
+    }
+    
+    // LEADS COLLECTION
+    // Authenticated users can create leads
+    // Users can read/update/delete their own leads
+    match /leads/{leadId} {
+      allow read: if isAuth() && (
+        resource.data.agentId == request.auth.uid ||
+        resource.data.userId == request.auth.uid
+      );
+      allow create: if isAuth();
+      allow update: if isAuth() && (
+        resource.data.agentId == request.auth.uid ||
+        request.auth.token.admin == true
+      );
+      allow delete: if isAuth() && (
+        resource.data.agentId == request.auth.uid ||
+        request.auth.token.admin == true
+      );
+    }
+    
+    // TRANSACTIONS COLLECTION
+    // Users can only read their own transactions
+    // Transactions created by backend (use service account)
+    match /transactions/{transactionId} {
+      allow read: if isAuth() && (
+        resource.data.buyerId == request.auth.uid ||
+        resource.data.sellerId == request.auth.uid ||
+        request.auth.token.admin == true
+      );
+      allow create: if false; // Backend only (service account)
+      allow update: if isAuth() && request.auth.token.admin == true;
+      allow delete: if isAuth() && request.auth.token.admin == true;
+    }
+    
+    // SUBCOLLECTIONS - Optional for nested data
+    // Documents subcollection under properties
+    match /properties/{propertyId}/documents/{documentId} {
+      allow read: if true; // Public read
+      allow create, update, delete: if isAuth() && 
+        get(/databases/$(database)/documents/properties/$(propertyId)).data.agentId == request.auth.uid;
+    }
+  }
+}

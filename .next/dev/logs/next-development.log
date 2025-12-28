@@ -1,127 +1,30 @@
-[00:00:05.185] Server  LOG      ✓ Ready in 3.9s
-[00:00:08.408] Server  LOG      ○ Compiling / ...
-[00:00:22.828] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:23.606] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:00:23.606] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:00:23.606] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765722678285}
-[00:00:28.302] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:00:28.462] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:00:28.462] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:00:28.462] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765722682745}
-[00:00:53.091] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:02:14.037] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://localhost:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765722788520}
-[00:02:23.014] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765722797583}
-[00:02:23.500] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:02:28.218] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://localhost:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765722802846}
-[00:02:28.763] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:02:31.472] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://localhost:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765722806105}
-[00:03:21.091] Server  LOG      ✓ Compiled in 3s
-[00:03:30.291] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:03:32.993] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:03:32.993] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:03:32.993] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765722867489}
-[00:03:35.639] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:03:43.878] Server  LOG      ✓ Compiled in 6.7s
-[00:04:31.086] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:31.839] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:04:31.839] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:04:31.839] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765722926467}
-[00:04:33.086] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:06:57.575] Server  LOG      ○ Compiling / ...
-[00:07:01.473] Server  LOG      ✓ Compiled in 8.5s
-[00:07:01.538] Browser ERROR   uncaughtError: ReferenceError: HeroScene is not defined
-[00:07:06.471] Browser ERROR   uncaughtError: ReferenceError: HeroScene is not defined
-[00:08:06.112] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:08:08.334] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-[00:08:08.610] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723142206}
-[00:08:10.616] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:08:12.187] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:08:12.187] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:08:12.187] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723146833}
-[00:08:16.895] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:08:31.915] Server  LOG      ✓ Compiled in 1217ms
-[00:08:46.202] Server  LOG      ✓ Compiled in 2.2s
-[00:09:00.519] Browser WARN    Unexpected import of module [project]/components/3d/hero-scene.tsx [app-client] (ecmascript, next/dynamic entry) from module [project]/app/page.tsx [app-client] (ecmascript), which was deleted by an HMR update
-[00:09:00.519] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:09:00.519] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:09:00.519] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723194365}
-[00:09:45.355] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:09:45.904] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:09:45.904] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:09:45.904] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723240584}
-[00:09:48.156] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:13:29.431] Server  LOG      ✓ Compiled in 1928ms
-[00:13:40.275] Server  LOG      ✓ Compiled in 1708ms
-[00:13:50.438] Server  LOG      ✓ Compiled in 634ms
-[00:13:54.435] Server  LOG      ✓ Compiled in 970ms
-[00:14:26.939] Server  LOG      ✓ Compiled in 842ms
-[00:14:47.915] Server  LOG      ✓ Compiled in 1301ms
-[00:15:11.125] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:15:12.294] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:15:12.295] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:15:12.295] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723566920}
-[00:15:14.407] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:15:26.741] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:15:28.862] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:15:28.862] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/login","route":"/login"}
-[00:15:28.862] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://localhost:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723583531}
-[00:15:33.026] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:15:35.068] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:15:35.068] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:15:35.068] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723589749}
-[00:15:37.557] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:15:40.317] Server  LOG      ✓ Compiled in 2.5s
-[00:15:59.623] Server  LOG      ✓ Compiled in 3.7s
-[00:16:16.063] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:16:21.560] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:16:21.560] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:16:21.560] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723636095}
-[00:16:22.463] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:16:22.463] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:16:22.463] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723636703}
-[00:19:04.304] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:19:04.304] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:19:04.304] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723798952}
-[00:20:13.909] Server  WARN     ⚠ Cross origin request detected from 192.168.11.109 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
-Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
-[00:20:14.947] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:20:14.947] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:20:14.947] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://192.168.11.109:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723869202}
-[00:20:34.498] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://192.168.11.109:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723888753}
-[00:20:35.021] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:20:37.134] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://192.168.11.109:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723891385}
-[00:20:38.322] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://192.168.11.109:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723892578}
-[00:20:38.836] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:20:40.472] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://192.168.11.109:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723894716}
-[00:20:43.860] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://192.168.11.109:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723898116}
-[00:20:44.375] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:20:46.040] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://192.168.11.109:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723900295}
-[00:20:48.668] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://192.168.11.109:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723902923}
-[00:20:50.334] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://192.168.11.109:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723904579}
-[00:20:51.189] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://192.168.11.109:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723905434}
-[00:20:52.594] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://192.168.11.109:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723906845}
-[00:21:07.415] Server  LOG      ○ Compiling /properties ...
-[00:21:07.926] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://192.168.11.109:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723922179}
-[00:21:08.426] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:21:20.874] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://192.168.11.109:3000/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723935074}
-[00:21:31.553] Browser ERROR   Failed to fetch RSC payload for http://192.168.11.109:3000/analytics. Falling back to browser navigation. {}
-[00:21:32.027] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:21:32.027] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/analytics","route":"/analytics"}
-[00:21:32.027] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/analytics","o":"http://192.168.11.109:3000/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723946285}
-[00:21:37.486] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:21:37.486] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/analytics","route":"/analytics"}
-[00:21:37.486] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/analytics","o":"http://192.168.11.109:3000/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723951745}
-[00:21:40.495] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://192.168.11.109:3000/settings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723954748}
-[00:21:43.640] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://192.168.11.109:3000/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723957856}
-[00:21:45.554] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://192.168.11.109:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723959800}
-[00:21:49.699] Server  LOG      ○ Compiling /dashboard ...
-[00:21:54.626] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://192.168.11.109:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723968801}
-[00:22:06.229] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://192.168.11.109:3000/settings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723980485}
-[00:22:13.321] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://192.168.11.109:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723987545}
-[00:22:16.723] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://192.168.11.109:3000/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723990960}
-[00:22:21.465] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://192.168.11.109:3000/settings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723995710}
-[00:22:24.279] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://192.168.11.109:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765723998509}
-[00:22:48.943] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:08.843] Server  LOG      ✓ Ready in 6.8s
+[00:00:15.282] Server  LOG      ○ Compiling / ...
+[00:00:50.833] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:50.834] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:00:50.834] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3001/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953287504}
+[00:01:13.149] Server  LOG      ○ Compiling /properties ...
+[00:01:28.997] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953324901}
+[00:01:29.145] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:01:29.831] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:01:37.410] Server  LOG      ○ Compiling /leads ...
+[00:01:39.583] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://localhost:3001/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953335388}
+[00:01:45.462] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/clients color: rgb(120, 120, 120) color: inherit {"dp":"/clients","o":"http://localhost:3001/clients","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953342076}
+[00:01:51.516] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/showings color: rgb(120, 120, 120) color: inherit {"dp":"/showings","o":"http://localhost:3001/showings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953348123}
+[00:02:03.741] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:02:03.741] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/analytics","route":"/analytics"}
+[00:02:03.741] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/analytics","o":"http://localhost:3001/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953360386}
+[00:02:08.986] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:02:08.986] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:02:08.986] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/showings","route":"/showings"}
+[00:02:08.986] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/showings color: rgb(120, 120, 120) color: inherit {"dp":"/showings","o":"http://localhost:3001/showings","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953365640}
+[00:02:12.837] Server  LOG      ○ Compiling /dashboard ...
+[00:02:26.904] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953382679}
+[00:09:46.896] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://localhost:3001/settings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953823381}
+[00:10:05.084] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:10:05.084] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/analytics","route":"/analytics"}
+[00:10:05.085] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/analytics","o":"http://localhost:3001/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953841642}
+[00:10:07.433] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -134,132 +37,93 @@ It can also happen if the client has a browser extension installed which messes 
 %s%s https://react.dev/link/hydration-mismatch 
 
   ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/analytics" notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="layout.tsx">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <script>
-                      <script>
-                      <RootLayout>
-                        <html
-                          lang="en"
--                         __gchrome_remoteframetoken="f53789addf9b75360551fd024b917ca2"
-                        >
-                  ...
-
-[00:22:48.943] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:22:48.943] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/analytics","route":"/analytics"}
-[00:22:48.943] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/analytics","o":"http://192.168.11.109:3000/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724023201}
-[00:22:51.234] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://192.168.11.109:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724025428}
-[00:23:00.266] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/properties/1 color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]","o":"http://192.168.11.109:3000/properties/1","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724034522}
-[00:23:13.546] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:23:13.546] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/1","route":"/properties/[id]"}
-[00:23:13.546] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/properties/1 color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]","o":"http://192.168.11.109:3000/properties/1","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724047738}
-[00:23:13.546] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-https://react.dev/link/hydration-mismatch
-
-  ...
-    <InnerLayoutRouter url="/properties/1" tree={[...]} params={{id:"1"}} cacheNode={{lazyData:null, ...}} ...>
-      <SegmentViewNode type="page" pagePath="properties...">
-        <SegmentTrieNode>
-        <ClientPageRoot Component={function PropertyDetailPage} serverProvidedParams={{...}}>
-          <PropertyDetailPage params={Promise} searchParams={Promise}>
-            <DashboardLayout>
-              <div className="min-h-scre...">
-                <Sidebar>
-                <div className="flex-1 fle...">
-                  <Navbar>
-                    <nav className="glass bord...">
-                      <div className="flex items...">
-                        <div className="flex-1 max...">
-                          <div className="relative">
-                            <Search>
-                            <Input placeholder="Search pro..." value="" onChange={function onChange} ...>
-                              <input
-                                type={undefined}
-                                data-slot="input"
-                                className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary..."
-                                placeholder="Search properties, leads, or clients..."
-                                value=""
-                                onChange={function onChange}
--                               __gchrome_uniqueid="6"
-                              >
-                        ...
-                  <main className="flex-1 p-6...">
-                    <div className="space-y-6">
-                      <LinkComponent>
-                      <div>
-                      <div className="grid grid-...">
-                        <div className="lg:col-spa...">
-                          <div className="glass roun...">
-                            <div>
-                            <p className="text-4xl f..." style={{color:"var..."}}>
-+                             2 500 000
--                             2.500.000
-                              ...
-                          ...
-                        ...
+    <div className="flex items...">
       ...
+        <MenuProvider scope={{Menu:[...], ...}} onClose={function Menu.useCallback} isUsingKeyboardRef={{current:false}} ...>
+          <DropdownMenuTrigger asChild={true}>
+            <DropdownMenuTrigger data-slot="dropdown-m..." asChild={true}>
+              <MenuAnchor asChild={true} __scopeMenu={{Menu:[...], ...}}>
+                <PopperAnchor __scopePopper={{Menu:[...], ...}} asChild={true} ref={null}>
+                  <Primitive.div asChild={true} ref={function}>
+                    <Slot ref={function}>
+                      <SlotClone ref={function}>
+                        <Primitive.button type="button" id="radix-_R_p..." aria-haspopup="menu" aria-expanded={false} ...>
+                          <Slot type="button" id="radix-_R_p..." aria-haspopup="menu" aria-expanded={false} ...>
+                            <SlotClone type="button" id="radix-_R_p..." aria-haspopup="menu" aria-expanded={false} ...>
+                              <Button variant="ghost" size="icon" className="relative t..." type="button" ...>
+                                <button
+                                  data-slot="dropdown-menu-trigger"
+                                  className={"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded..."}
+                                  type="button"
++                                 id="radix-_R_pklritmlb_"
+-                                 id="radix-_R_36inebmplb_"
+                                  aria-haspopup="menu"
+                                  aria-expanded={false}
+                                  aria-controls={undefined}
+                                  data-state="closed"
+                                  data-disabled={undefined}
+                                  disabled={false}
+                                  onPointerDown={function handleEvent}
+                                  onKeyDown={function handleEvent}
+                                  ref={function}
+                                >
+          ...
+      ...
+        <MenuProvider scope={{Menu:[...], ...}} onClose={function Menu.useCallback} isUsingKeyboardRef={{current:false}} ...>
+          <DropdownMenuTrigger asChild={true}>
+            <DropdownMenuTrigger data-slot="dropdown-m..." asChild={true}>
+              <MenuAnchor asChild={true} __scopeMenu={{Menu:[...], ...}}>
+                <PopperAnchor __scopePopper={{Menu:[...], ...}} asChild={true} ref={null}>
+                  <Primitive.div asChild={true} ref={function}>
+                    <Slot ref={function}>
+                      <SlotClone ref={function}>
+                        <Primitive.button type="button" id="radix-_R_1..." aria-haspopup="menu" aria-expanded={false} ...>
+                          <Slot type="button" id="radix-_R_1..." aria-haspopup="menu" aria-expanded={false} ...>
+                            <SlotClone type="button" id="radix-_R_1..." aria-haspopup="menu" aria-expanded={false} ...>
+                              <Button variant="ghost" className="flex items..." type="button" id="radix-_R_1..." ...>
+                                <button
+                                  data-slot="dropdown-menu-trigger"
+                                  className={"justify-center whitespace-nowrap rounded-md text-sm font-medium transit..."}
+                                  type="button"
++                                 id="radix-_R_19klritmlb_"
+-                                 id="radix-_R_56inebmplb_"
+                                  aria-haspopup="menu"
+                                  aria-expanded={false}
+                                  aria-controls={undefined}
+                                  data-state="closed"
+                                  data-disabled={undefined}
+                                  disabled={false}
+                                  onPointerDown={function handleEvent}
+                                  onKeyDown={function handleEvent}
+                                  ref={function}
+                                >
+          ...
 
-[00:23:23.621] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://192.168.11.109:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724057834}
-[00:23:24.280] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://192.168.11.109:3000/settings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724058531}
-[00:23:24.954] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://192.168.11.109:3000/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724059163}
-[00:23:25.646] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://192.168.11.109:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724059868}
-[00:23:26.391] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://192.168.11.109:3000/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724060624}
-[00:23:28.375] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://192.168.11.109:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724062631}
-[00:23:37.009] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:23:37.009] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:23:37.009] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://192.168.11.109:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724071240}
-[00:23:56.302] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://192.168.11.109:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724090549}
-[00:23:56.804] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:23:57.720] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://192.168.11.109:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724091967}
-[00:24:21.749] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://192.168.11.109:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724116002}
-[00:24:22.259] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:24:24.728] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://192.168.11.109:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724118978}
-[00:24:56.667] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://192.168.11.109:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724150921}
-[00:24:57.185] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:24:59.170] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://192.168.11.109:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724153422}
-[00:25:28.854] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://localhost:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724183508}
-[00:25:29.413] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:25:33.073] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:25:33.618] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:25:33.618] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/terms","route":"/terms"}
-[00:25:33.619] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/terms color: rgb(120, 120, 120) color: inherit {"dp":"/terms","o":"http://localhost:3000/terms","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724188277}
-[00:25:35.112] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:25:35.846] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:25:35.846] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/register","route":"/register"}
-[00:25:35.846] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://localhost:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724190527}
-[00:25:38.286] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/#testimonials color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/#testimonials","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724192749}
-[00:25:40.265] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://localhost:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724194937}
-[00:25:40.824] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:25:42.331] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/#testimonials color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/#testimonials","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724196992}
-[00:28:18.646] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://192.168.11.109:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724352895}
-[00:28:19.161] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:28:25.443] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/properties/1 color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]","o":"http://192.168.11.109:3000/properties/1","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724359698}
-[00:28:38.556] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://192.168.11.109:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724372745}
-[00:28:45.386] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://192.168.11.109:3000/settings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724379630}
-[00:28:46.908] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://192.168.11.109:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724381157}
-[00:28:58.676] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:28:58.677] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:28:58.677] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://192.168.11.109:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://192.168.11.109:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724392912}
-[00:31:48.490] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://localhost:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765724563034}
-[00:31:48.914] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:10:07.433] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:10:07.433] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:10:07.433] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/settings","route":"/settings"}
+[00:10:07.433] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://localhost:3001/settings","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953843987}
+[00:10:25.714] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953861899}
+[00:10:28.147] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://localhost:3001/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953864327}
+[00:10:29.535] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953866083}
+[00:10:31.715] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/clients color: rgb(120, 120, 120) color: inherit {"dp":"/clients","o":"http://localhost:3001/clients","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953868214}
+[00:10:32.888] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/showings color: rgb(120, 120, 120) color: inherit {"dp":"/showings","o":"http://localhost:3001/showings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953869403}
+[00:10:36.001] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:10:36.001] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/analytics","route":"/analytics"}
+[00:10:36.001] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/analytics","o":"http://localhost:3001/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953872549}
+[00:10:40.772] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:10:40.772] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:10:40.772] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/showings","route":"/showings"}
+[00:10:40.772] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/showings color: rgb(120, 120, 120) color: inherit {"dp":"/showings","o":"http://localhost:3001/showings","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953877178}
+[00:10:43.241] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:10:43.241] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:10:43.241] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/dashboard","route":"/dashboard"}
+[00:10:43.241] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953879787}
+[00:14:45.327] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954121801}
+[00:14:57.800] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954134126}
+[00:17:36.470] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954292782}
+[00:17:38.859] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://localhost:3001/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954294711}
+[00:26:51.962] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954848152}
+[00:26:56.419] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954852680}
+[00:27:01.218] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954857391}
+[00:27:08.249] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954864520}

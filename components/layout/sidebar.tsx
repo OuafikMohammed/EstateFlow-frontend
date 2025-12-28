@@ -6,7 +6,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, Home, Users, BarChart3, SettingsIcon, Menu, X } from "lucide-react"
+import { LayoutDashboard, Home, Users, BarChart3, SettingsIcon, Menu, X, Calendar, UserCheck } from "lucide-react"
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -16,6 +16,8 @@ export function Sidebar() {
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
     { icon: Home, label: "Properties", href: "/properties" },
     { icon: Users, label: "Leads", href: "/leads" },
+    { icon: UserCheck, label: "Clients", href: "/clients" },
+    { icon: Calendar, label: "Showings", href: "/showings" },
     { icon: BarChart3, label: "Analytics", href: "/analytics" },
     { icon: SettingsIcon, label: "Settings", href: "/settings" },
   ]
