@@ -1,129 +1,14 @@
-[00:00:08.843] Server  LOG      ✓ Ready in 6.8s
-[00:00:15.282] Server  LOG      ○ Compiling / ...
-[00:00:50.833] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:00:50.834] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:00:50.834] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3001/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953287504}
-[00:01:13.149] Server  LOG      ○ Compiling /properties ...
-[00:01:28.997] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953324901}
-[00:01:29.145] Browser LOG     THREE.WebGLRenderer: Context Lost.
-[00:01:29.831] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:01:37.410] Server  LOG      ○ Compiling /leads ...
-[00:01:39.583] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://localhost:3001/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953335388}
-[00:01:45.462] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/clients color: rgb(120, 120, 120) color: inherit {"dp":"/clients","o":"http://localhost:3001/clients","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953342076}
-[00:01:51.516] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/showings color: rgb(120, 120, 120) color: inherit {"dp":"/showings","o":"http://localhost:3001/showings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953348123}
-[00:02:03.741] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:02:03.741] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/analytics","route":"/analytics"}
-[00:02:03.741] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/analytics","o":"http://localhost:3001/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953360386}
-[00:02:08.986] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:02:08.986] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:02:08.986] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/showings","route":"/showings"}
-[00:02:08.986] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/showings color: rgb(120, 120, 120) color: inherit {"dp":"/showings","o":"http://localhost:3001/showings","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953365640}
-[00:02:12.837] Server  LOG      ○ Compiling /dashboard ...
-[00:02:26.904] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953382679}
-[00:09:46.896] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://localhost:3001/settings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953823381}
-[00:10:05.084] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:10:05.084] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/analytics","route":"/analytics"}
-[00:10:05.085] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/analytics","o":"http://localhost:3001/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953841642}
-[00:10:07.433] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <div className="flex items...">
-      ...
-        <MenuProvider scope={{Menu:[...], ...}} onClose={function Menu.useCallback} isUsingKeyboardRef={{current:false}} ...>
-          <DropdownMenuTrigger asChild={true}>
-            <DropdownMenuTrigger data-slot="dropdown-m..." asChild={true}>
-              <MenuAnchor asChild={true} __scopeMenu={{Menu:[...], ...}}>
-                <PopperAnchor __scopePopper={{Menu:[...], ...}} asChild={true} ref={null}>
-                  <Primitive.div asChild={true} ref={function}>
-                    <Slot ref={function}>
-                      <SlotClone ref={function}>
-                        <Primitive.button type="button" id="radix-_R_p..." aria-haspopup="menu" aria-expanded={false} ...>
-                          <Slot type="button" id="radix-_R_p..." aria-haspopup="menu" aria-expanded={false} ...>
-                            <SlotClone type="button" id="radix-_R_p..." aria-haspopup="menu" aria-expanded={false} ...>
-                              <Button variant="ghost" size="icon" className="relative t..." type="button" ...>
-                                <button
-                                  data-slot="dropdown-menu-trigger"
-                                  className={"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded..."}
-                                  type="button"
-+                                 id="radix-_R_pklritmlb_"
--                                 id="radix-_R_36inebmplb_"
-                                  aria-haspopup="menu"
-                                  aria-expanded={false}
-                                  aria-controls={undefined}
-                                  data-state="closed"
-                                  data-disabled={undefined}
-                                  disabled={false}
-                                  onPointerDown={function handleEvent}
-                                  onKeyDown={function handleEvent}
-                                  ref={function}
-                                >
-          ...
-      ...
-        <MenuProvider scope={{Menu:[...], ...}} onClose={function Menu.useCallback} isUsingKeyboardRef={{current:false}} ...>
-          <DropdownMenuTrigger asChild={true}>
-            <DropdownMenuTrigger data-slot="dropdown-m..." asChild={true}>
-              <MenuAnchor asChild={true} __scopeMenu={{Menu:[...], ...}}>
-                <PopperAnchor __scopePopper={{Menu:[...], ...}} asChild={true} ref={null}>
-                  <Primitive.div asChild={true} ref={function}>
-                    <Slot ref={function}>
-                      <SlotClone ref={function}>
-                        <Primitive.button type="button" id="radix-_R_1..." aria-haspopup="menu" aria-expanded={false} ...>
-                          <Slot type="button" id="radix-_R_1..." aria-haspopup="menu" aria-expanded={false} ...>
-                            <SlotClone type="button" id="radix-_R_1..." aria-haspopup="menu" aria-expanded={false} ...>
-                              <Button variant="ghost" className="flex items..." type="button" id="radix-_R_1..." ...>
-                                <button
-                                  data-slot="dropdown-menu-trigger"
-                                  className={"justify-center whitespace-nowrap rounded-md text-sm font-medium transit..."}
-                                  type="button"
-+                                 id="radix-_R_19klritmlb_"
--                                 id="radix-_R_56inebmplb_"
-                                  aria-haspopup="menu"
-                                  aria-expanded={false}
-                                  aria-controls={undefined}
-                                  data-state="closed"
-                                  data-disabled={undefined}
-                                  disabled={false}
-                                  onPointerDown={function handleEvent}
-                                  onKeyDown={function handleEvent}
-                                  ref={function}
-                                >
-          ...
-
-[00:10:07.433] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:10:07.433] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:10:07.433] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/settings","route":"/settings"}
-[00:10:07.433] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://localhost:3001/settings","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953843987}
-[00:10:25.714] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953861899}
-[00:10:28.147] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://localhost:3001/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953864327}
-[00:10:29.535] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953866083}
-[00:10:31.715] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/clients color: rgb(120, 120, 120) color: inherit {"dp":"/clients","o":"http://localhost:3001/clients","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953868214}
-[00:10:32.888] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/showings color: rgb(120, 120, 120) color: inherit {"dp":"/showings","o":"http://localhost:3001/showings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953869403}
-[00:10:36.001] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:10:36.001] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/analytics","route":"/analytics"}
-[00:10:36.001] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/analytics color: rgb(120, 120, 120) color: inherit {"dp":"/analytics","o":"http://localhost:3001/analytics","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953872549}
-[00:10:40.772] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:10:40.772] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:10:40.772] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/showings","route":"/showings"}
-[00:10:40.772] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/showings color: rgb(120, 120, 120) color: inherit {"dp":"/showings","o":"http://localhost:3001/showings","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953877178}
-[00:10:43.241] Browser WARN    Image with src "http://localhost:3001/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:10:43.241] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:10:43.241] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/dashboard","route":"/dashboard"}
-[00:10:43.241] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766953879787}
-[00:14:45.327] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954121801}
-[00:14:57.800] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954134126}
-[00:17:36.470] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954292782}
-[00:17:38.859] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/leads color: rgb(120, 120, 120) color: inherit {"dp":"/leads","o":"http://localhost:3001/leads","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954294711}
-[00:26:51.962] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954848152}
-[00:26:56.419] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954852680}
-[00:27:01.218] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3001/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954857391}
-[00:27:08.249] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3001/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766954864520}
+[00:01:02.004] Server  LOG      ✓ Ready in 33.7s
+[00:03:42.901] Server  LOG      ○ Compiling / ...
+[00:05:33.790] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:05:33.790] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:05:33.790] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767018506245}
+[00:05:38.216] Server  LOG      ○ Compiling /login ...
+[00:06:05.638] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://localhost:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767018536629}
+[00:06:05.892] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:06:10.465] Server  LOG      ○ Compiling /register ...
+[00:06:22.694] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/register color: rgb(120, 120, 120) color: inherit {"dp":"/register","o":"http://localhost:3000/register","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767018555004}
+[00:06:23.203] Browser LOG     THREE.WebGLRenderer: Context Lost.
+[00:07:50.039] Server  LOG      ○ Compiling /dashboard ...
+[00:08:19.888] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767018670570}
+[00:08:21.171] Browser WARN    Image with src "http://localhost:3000/estateflow-logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
