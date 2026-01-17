@@ -31,8 +31,8 @@ export default function AuthStatus() {
                 Login
               </Button>
             </Link>
-            <Link href="/register">
-              <Button size="sm">Register</Button>
+            <Link href="/signup">
+              <Button size="sm">Sign Up</Button>
             </Link>
           </div>
         </div>
@@ -45,7 +45,7 @@ export default function AuthStatus() {
       <div className="space-y-2">
         <p className="text-sm font-medium">Logged in as:</p>
         <p className="text-sm text-muted-foreground">{user.email}</p>
-        {user.displayName && <p className="text-sm">{user.displayName}</p>}
+        {user.fullName && <p className="text-sm">{user.fullName}</p>}
       </div>
     </Card>
   )

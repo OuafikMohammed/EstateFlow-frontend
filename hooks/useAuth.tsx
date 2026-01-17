@@ -1,83 +1,124 @@
 "use client"
 
-import { useEffect, useState, useCallback, createContext, useContext, ReactNode } from "react"
-import { AuthUser, subscribeToAuthStateChange, loginUser, registerUser, logoutUser } from "@/lib/firebase/auth"
+import { useEffect, useState } from "react"
+import { createClient } from "@/lib/supabase/client"
 
-interface AuthContextType {
-  user: AuthUser | null
-  loading: boolean
-  error: Error | null
-  login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void>
+export interface User {
+  id: string
+  email: string
+  fullName?: string
+  companyId: string
+  companyName?: string
+  role: "admin" | "agent" | "viewer"
+  isActive: boolean
+  avatarUrl?: string
+  phone?: string
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null)
+export function useAuth() {
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
-    const unsubscribe = subscribeToAuthStateChange((authUser) => {
-      setUser(authUser)
-      setLoading(false)
-    })
+    const fetchUser = async () => {
+      try {
+        setLoading(true)
+        const supabase = createClient()
 
-    return () => unsubscribe()
-  }, [])
+        // Get current auth user
+        const {
+          data: { user: authUser },
+          error: authError,
+        } = await supabase.auth.getUser()
 
-  const login = useCallback(async (email: string, password: string) => {
-    try {
-      setError(null)
-      await loginUser(email, password)
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err))
-      setError(error)
-      throw error
+        if (authError) {
+          console.error("Auth error:", authError)
+          setUser(null)
+          setError(authError)
+          return
+        }
+
+        if (!authUser) {
+          // User is not logged in
+          setUser(null)
+          return
+        }
+
+        // Fetch user profile data
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select(
+            `
+            id,
+            full_name,
+            company_id,
+            role,
+            is_active,
+            avatar_url,
+            phone
+          `
+          )
+          .eq("id", authUser.id)
+          .single()
+
+        if (profileError) {
+          console.error("Profile fetch error:", {
+            code: profileError.code,
+            message: profileError.message,
+            details: profileError.details,
+            hint: profileError.hint,
+          })
+          setUser(null)
+          setError(profileError)
+          return
+        }
+
+        if (!profileData) {
+          console.error("No profile data found for user:", authUser.id)
+          setUser(null)
+          return
+        }
+
+        // Fetch company data separately
+        const { data: companyData, error: companyError } = await supabase
+          .from("companies")
+          .select("id, name")
+          .eq("id", profileData.company_id)
+          .single()
+
+        if (companyError) {
+          console.warn("Company fetch warning:", companyError.message)
+          // Don't fail if company fetch fails, just continue without company name
+        }
+
+        // Map to User interface
+        const userData: User = {
+          id: authUser.id,
+          email: authUser.email || "",
+          fullName: profileData.full_name || undefined,
+          companyId: profileData.company_id,
+          companyName: companyData?.name || undefined,
+          role: profileData.role,
+          isActive: profileData.is_active,
+          avatarUrl: profileData.avatar_url || undefined,
+          phone: profileData.phone || undefined,
+        }
+
+        setUser(userData)
+        setError(null)
+      } catch (err) {
+        const e = err instanceof Error ? err : new Error(String(err))
+        setError(e)
+        console.error("useAuth error:", e)
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
     }
+
+    fetchUser()
   }, [])
 
-  const register = useCallback(async (email: string, password: string) => {
-    try {
-      setError(null)
-      await registerUser(email, password)
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err))
-      setError(error)
-      throw error
-    }
-  }, [])
-
-  const logout = useCallback(async () => {
-    try {
-      setError(null)
-      await logoutUser()
-      setUser(null)
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err))
-      setError(error)
-      throw error
-    }
-  }, [])
-
-  const value: AuthContextType = {
-    user,
-    loading,
-    error,
-    login,
-    register,
-    logout,
-  }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error("useAuth must be used within AuthProvider")
-  }
-  return context
+  return { user, loading, error }
 }

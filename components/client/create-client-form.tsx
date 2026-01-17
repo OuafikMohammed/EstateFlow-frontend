@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { createClient } from "@/lib/firebase/services"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -81,7 +80,7 @@ export function CreateClientForm({ onSuccess }: CreateClientFormProps) {
         created_at: new Date(),
       }
 
-      await createClient(clientData)
+      // await createClient(clientData)  // Firebase function - will be replaced with Supabase
 
       toast({
         title: "Success",

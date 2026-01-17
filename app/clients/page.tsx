@@ -7,34 +7,14 @@ import { ClientsTable } from "@/components/client/clients-table"
 import { CreateClientForm } from "@/components/client/create-client-form"
 import { Button } from "@/components/ui/button"
 import { Plus, Users } from "lucide-react"
-import { Client, subscribeToClients } from "@/lib/firebase/services"
+// Firebase imports removed - using Supabase instead
+// import { Client, subscribeToClients } from "@/lib/firebase/services"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { StatsCard } from "@/components/dashboard/stats-card"
 
 export default function ClientsPage() {
-  const [clients, setClients] = useState<Client[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-  useEffect(() => {
-    setIsLoading(true)
-    setError(null)
-
-    const unsubscribe = subscribeToClients(
-      (data) => {
-        setClients(data)
-        setIsLoading(false)
-      },
-      [],
-      (err) => {
-        setError(err.message)
-        setIsLoading(false)
-      },
-    )
-
-    return () => unsubscribe()
-  }, [])
+  const clients: any[] = []
 
   const stats = [
     {
@@ -81,12 +61,12 @@ export default function ClientsPage() {
               Clients Management
             </h1>
             <p className="text-[var(--color-muted-foreground)]">
-              Track and manage your property clients
+              Track and manage your property clients (Coming Soon)
             </p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/80 text-black font-semibold">
+              <Button className="bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/80 text-black font-semibold" disabled>
                 <Plus className="w-4 h-4 mr-2" />
                 New Client
               </Button>
@@ -113,14 +93,14 @@ export default function ClientsPage() {
         </motion.div>
 
         {/* Error State */}
-        {error && (
+        {false && (
           <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-lg">
-            Error: {error}
+            Error loading clients
           </div>
         )}
 
         {/* Table */}
-        <ClientsTable clients={clients} isLoading={isLoading} />
+        <ClientsTable clients={clients} isLoading={false} />
       </div>
     </DashboardLayout>
   )

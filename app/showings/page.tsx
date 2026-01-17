@@ -7,34 +7,14 @@ import { ShowingsTable } from "@/components/showing/showings-table"
 import { CreateShowingForm } from "@/components/showing/create-showing-form"
 import { Button } from "@/components/ui/button"
 import { Plus, Calendar } from "lucide-react"
-import { Showing, subscribeToShowings } from "@/lib/firebase/services"
+// Firebase imports removed - using Supabase instead
+// import { Showing, subscribeToShowings } from "@/lib/firebase/services"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { StatsCard } from "@/components/dashboard/stats-card"
 
 export default function ShowingsPage() {
-  const [showings, setShowings] = useState<Showing[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-  useEffect(() => {
-    setIsLoading(true)
-    setError(null)
-
-    const unsubscribe = subscribeToShowings(
-      (data) => {
-        setShowings(data)
-        setIsLoading(false)
-      },
-      [],
-      (err) => {
-        setError(err.message)
-        setIsLoading(false)
-      },
-    )
-
-    return () => unsubscribe()
-  }, [])
+  const showings: any[] = []
 
   const stats = [
     {
@@ -81,12 +61,12 @@ export default function ShowingsPage() {
               Property Showings
             </h1>
             <p className="text-[var(--color-muted-foreground)]">
-              Manage and track all property showings
+              Manage and track all property showings (Coming Soon)
             </p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/80 text-black font-semibold">
+              <Button className="bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/80 text-black font-semibold" disabled>
                 <Plus className="w-4 h-4 mr-2" />
                 New Showing
               </Button>
@@ -113,14 +93,14 @@ export default function ShowingsPage() {
         </motion.div>
 
         {/* Error State */}
-        {error && (
+        {false && (
           <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-lg">
-            Error: {error}
+            Error loading showings
           </div>
         )}
 
         {/* Table */}
-        <ShowingsTable showings={showings} isLoading={isLoading} />
+        <ShowingsTable showings={showings} isLoading={false} />
       </div>
     </DashboardLayout>
   )

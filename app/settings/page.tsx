@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useAuth } from "@/hooks/useAuth"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,8 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { User, Building2, Bell, CreditCard, Shield } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function SettingsPage() {
+  const { user, loading } = useAuth()
   const [activeTab, setActiveTab] = useState("profile")
   const [notifications, setNotifications] = useState({
     email: true,
@@ -25,6 +28,16 @@ export default function SettingsPage() {
     { id: "billing", label: "Billing", icon: CreditCard },
     { id: "security", label: "Security", icon: Shield },
   ]
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <Spinner />
+        </div>
+      </DashboardLayout>
+    )
+  }
 
   return (
     <DashboardLayout>
@@ -68,8 +81,12 @@ export default function SettingsPage() {
                   <h2 className="text-2xl font-serif font-bold text-[var(--color-text-light)]">Profile Settings</h2>
 
                   <div className="flex items-center gap-6">
-                    <div className="w-24 h-24 rounded-full bg-[var(--color-bg-card)] flex items-center justify-center">
-                      <User className="w-12 h-12 text-[var(--color-muted-foreground)]" />
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-r from-[var(--color-primary-gold)] to-[var(--color-accent)] flex items-center justify-center text-2xl font-bold text-[var(--color-bg-dark)]">
+                      {user?.fullName
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase() || "U"}
                     </div>
                     <Button
                       variant="outline"
@@ -86,8 +103,9 @@ export default function SettingsPage() {
                       </Label>
                       <Input
                         id="fullName"
-                        defaultValue="Ahmed El Mansouri"
+                        value={user?.fullName || ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                        disabled
                       />
                     </div>
                     <div className="space-y-2">
@@ -97,7 +115,7 @@ export default function SettingsPage() {
                       <Input
                         id="email"
                         type="email"
-                        defaultValue="ahmed@flowstate.ma"
+                        value={user?.email || ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                         disabled
                       />
@@ -108,7 +126,8 @@ export default function SettingsPage() {
                       </Label>
                       <Input
                         id="phone"
-                        defaultValue="+212 600 123456"
+                        value={user?.phone || ""}
+                        placeholder="Not set"
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                       />
                     </div>
@@ -118,8 +137,9 @@ export default function SettingsPage() {
                       </Label>
                       <Input
                         id="role"
-                        defaultValue="Senior Agent"
+                        value={user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                        disabled
                       />
                     </div>
                   </div>
@@ -154,18 +174,20 @@ export default function SettingsPage() {
                       </Label>
                       <Input
                         id="agencyName"
-                        defaultValue="FlowState Real Estate"
+                        value={user?.companyName || ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                        disabled
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="agencyAddress" className="text-[var(--color-text-light)]">
-                        Address
+                      <Label htmlFor="companyId" className="text-[var(--color-text-light)]">
+                        Company ID
                       </Label>
                       <Input
-                        id="agencyAddress"
-                        defaultValue="123 Boulevard Anfa, Casablanca"
+                        id="companyId"
+                        value={user?.companyId || ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                        disabled
                       />
                     </div>
                     <div className="space-y-2">
@@ -174,7 +196,7 @@ export default function SettingsPage() {
                       </Label>
                       <Input
                         id="website"
-                        placeholder="https://flowstate.ma"
+                        placeholder="https://yourcompany.com"
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                       />
                     </div>
@@ -253,41 +275,10 @@ export default function SettingsPage() {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h3 className="text-xl font-semibold text-[var(--color-text-light)]">Professional Plan</h3>
-                        <p className="text-[var(--color-muted-foreground)]">599 DH/month</p>
+                        <p className="text-[var(--color-muted-foreground)]">Free Trial</p>
                       </div>
                       <Button className="bg-gradient-to-r from-[var(--color-primary-gold)] to-[var(--color-accent)] text-[var(--color-bg-dark)]">
                         Upgrade Plan
-                      </Button>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-[var(--color-muted-foreground)]">Usage</span>
-                        <span className="text-[var(--color-text-light)]">23/200 properties</span>
-                      </div>
-                      <div className="w-full bg-[var(--color-border)] rounded-full h-2">
-                        <div
-                          className="h-2 rounded-full bg-gradient-to-r from-[var(--color-primary-gold)] to-[var(--color-accent)]"
-                          style={{ width: "11.5%" }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-[var(--color-text-light)]">Payment Method</h3>
-                    <div className="p-4 bg-[var(--color-bg-card)] rounded-lg flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <CreditCard className="w-6 h-6" style={{ color: "var(--color-primary-gold)" }} />
-                        <div>
-                          <p className="font-semibold text-[var(--color-text-light)]">•••• •••• •••• 1234</p>
-                          <p className="text-sm text-[var(--color-muted-foreground)]">Expires 12/25</p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        className="border-[var(--color-border)] text-[var(--color-text-light)] bg-transparent"
-                      >
-                        Update
                       </Button>
                     </div>
                   </div>

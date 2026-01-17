@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Eye, Trash2, Search, Mail, Phone } from "lucide-react"
-import { Client } from "@/lib/firebase/services"
-import { deleteClient } from "@/lib/firebase/services"
+// Firebase imports removed - using Supabase instead
+// import { Client } from "@/lib/firebase/services"
+// import { deleteClient } from "@/lib/firebase/services"
 import {
   Table,
   TableBody,
@@ -19,6 +20,16 @@ import {
 } from "@/components/ui/table"
 import { Spinner } from "@/components/ui/spinner"
 import { useToast } from "@/hooks/use-toast"
+
+interface Client {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  type: 'buyer' | 'seller' | 'investor'
+  status: 'active' | 'inactive' | 'prospect'
+  [key: string]: any
+}
 
 interface ClientsTableProps {
   clients: Client[]
@@ -83,7 +94,7 @@ export function ClientsTable({ clients, isLoading, onRefresh }: ClientsTableProp
 
   const handleDeleteClient = async (id: string) => {
     try {
-      await deleteClient(id)
+      // await deleteClient(id)  // Firebase function - will be replaced with Supabase
       toast({
         title: "Success",
         description: "Client deleted successfully",

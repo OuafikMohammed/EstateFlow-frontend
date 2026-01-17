@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { createShowing } from "@/lib/firebase/services"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -9,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Alert } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { useToast } from "@/hooks/use-toast"
-import { Timestamp } from "firebase/firestore"
 
 interface CreateShowingFormProps {
   onSuccess?: () => void
@@ -68,7 +66,7 @@ export function CreateShowingForm({ onSuccess }: CreateShowingFormProps) {
         created_at: new Date(),
       }
 
-      await createShowing(showingData)
+      // await createShowing(showingData)  // Firebase function - will be replaced with Supabase
 
       toast({
         title: "Success",

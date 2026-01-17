@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Eye, Trash2, Search, Edit } from "lucide-react"
-import { Showing } from "@/lib/firebase/services"
-import { deleteShowing, updateShowing } from "@/lib/firebase/services"
+// Firebase imports removed - using Supabase instead
+// import { Showing } from "@/lib/firebase/services"
+// import { deleteShowing, updateShowing } from "@/lib/firebase/services"
 import {
   Table,
   TableBody,
@@ -19,6 +20,17 @@ import {
 } from "@/components/ui/table"
 import { Spinner } from "@/components/ui/spinner"
 import { useToast } from "@/hooks/use-toast"
+
+interface Showing {
+  id: string
+  property_id: string
+  agent_id: string
+  client_id: string
+  scheduled_date: Date | string
+  status: 'scheduled' | 'completed' | 'cancelled'
+  notes?: string
+  [key: string]: any
+}
 
 interface ShowingsTableProps {
   showings: Showing[]
@@ -67,7 +79,7 @@ export function ShowingsTable({ showings, isLoading, onRefresh }: ShowingsTableP
 
   const handleDeleteShowing = async (id: string) => {
     try {
-      await deleteShowing(id)
+      // await deleteShowing(id)  // Firebase function - will be replaced with Supabase
       toast({
         title: "Success",
         description: "Showing deleted successfully",
