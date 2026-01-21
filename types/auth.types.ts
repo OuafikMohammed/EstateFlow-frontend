@@ -35,8 +35,9 @@ export interface AuthUser {
   id: string
   email: string
   fullName?: string
-  role?: 'admin' | 'agent' | 'viewer'
+  role?: 'super_admin' | 'company_admin' | 'agent' | 'client'
   companyId?: string
+  isActive?: boolean
 }
 
 export interface Company {
@@ -48,8 +49,57 @@ export interface Company {
 
 export interface UserProfile {
   id: string
-  companyId: string
   fullName: string
-  role: 'admin' | 'agent' | 'viewer'
+  email: string
+  role: 'super_admin' | 'company_admin' | 'agent' | 'client'
+  companyId: string
   isActive: boolean
+}
+
+/**
+ * Team Invitation Types
+ */
+export interface TeamInvitation {
+  id: string
+  companyId: string
+  email: string
+  fullName?: string
+  role: 'agent' | 'company_admin'
+  token: string
+  expiresAt: string
+  acceptedAt?: string
+  acceptedBy?: string
+  createdAt: string
+  invitedBy: string
+}
+
+export interface InvitationDetails {
+  email: string
+  fullName?: string
+  role: 'agent' | 'company_admin'
+  companyName: string
+}
+
+export interface AcceptInvitationFormData {
+  password: string
+  confirmPassword: string
+}
+
+export interface AcceptInvitationResponse extends AuthResponse<{
+  email: string
+  message: string
+}> {}
+
+/**
+ * Google OAuth Types
+ */
+export interface GoogleAuthProvider {
+  clientId: string
+  clientSecret?: string
+}
+
+export interface OAuth2Error {
+  error: string
+  error_description?: string
+  error_uri?: string
 }

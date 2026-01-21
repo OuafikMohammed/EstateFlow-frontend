@@ -264,6 +264,33 @@ CREATE INDEX idx_showings_company_id ON public.showings(company_id);
 CREATE INDEX idx_showings_scheduled_by ON public.showings(scheduled_by);
 CREATE INDEX idx_showings_scheduled_at ON public.showings(scheduled_at);
 
+-- Step 9.5: Create TEAM_INVITATIONS table
+-- ============================================================================
+CREATE TABLE public.team_invitations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  company_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
+  invited_by UUID NOT NULL REFERENCES public.profiles(id) ON DELETE SET NULL,
+  email VARCHAR(255) NOT NULL,
+  full_name VARCHAR(255),
+  role public.user_role DEFAULT 'agent',
+  token VARCHAR(255) UNIQUE NOT NULL,
+  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  accepted_at TIMESTAMP WITH TIME ZONE,
+  accepted_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  CONSTRAINT team_invitations_email_not_empty CHECK (email != ''),
+  CONSTRAINT team_invitations_unique_pending UNIQUE(company_id, email) WHERE accepted_at IS NULL
+);
+
+-- Create indexes on team_invitations
+CREATE INDEX idx_team_invitations_company_id ON public.team_invitations(company_id);
+CREATE INDEX idx_team_invitations_email ON public.team_invitations(email);
+CREATE INDEX idx_team_invitations_token ON public.team_invitations(token);
+CREATE INDEX idx_team_invitations_expires_at ON public.team_invitations(expires_at);
+CREATE INDEX idx_team_invitations_accepted_at ON public.team_invitations(accepted_at);
+
 -- Step 10: Enable Row Level Security on all tables
 -- ============================================================================
 ALTER TABLE public.companies ENABLE ROW LEVEL SECURITY;
@@ -273,6 +300,7 @@ ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.lead_activities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.property_lead_assignments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.showings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.team_invitations ENABLE ROW LEVEL SECURITY;
 
 -- Step 11: Create RLS Policies
 -- ============================================================================
@@ -477,6 +505,33 @@ CREATE POLICY "Users can update their showings"
   ON public.showings FOR UPDATE
   USING (scheduled_by = auth.uid());
 
+-- TEAM_INVITATIONS: Company admins can invite, users can accept invitations for themselves
+CREATE POLICY "Company admin can view company invitations"
+  ON public.team_invitations FOR SELECT
+  USING (
+    (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'super_admin' OR
+    (
+      company_id = (SELECT company_id FROM public.profiles WHERE id = auth.uid()) AND
+      (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'company_admin'
+    )
+  );
+
+CREATE POLICY "Users can view invitations for their email"
+  ON public.team_invitations FOR SELECT
+  USING (email = (SELECT email FROM public.profiles WHERE id = auth.uid()));
+
+CREATE POLICY "Company admin can create invitations"
+  ON public.team_invitations FOR INSERT
+  WITH CHECK (
+    company_id = (SELECT company_id FROM public.profiles WHERE id = auth.uid()) AND
+    invited_by = auth.uid() AND
+    (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'company_admin'
+  );
+
+CREATE POLICY "Only system can update invitations (mark as accepted)"
+  ON public.team_invitations FOR UPDATE
+  USING (false); -- This is handled server-side
+
 -- Step 12: Note about profile creation
 -- ============================================================================
 -- Profiles are now created directly from the signup server action (auth.ts)
@@ -592,6 +647,11 @@ CREATE TRIGGER update_showings_timestamp
   FOR EACH ROW
   EXECUTE FUNCTION public.update_timestamp();
 
+CREATE TRIGGER update_team_invitations_timestamp
+  BEFORE UPDATE ON public.team_invitations
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_timestamp();
+
 -- ============================================================================
 -- SCHEMA SETUP COMPLETE
 -- ============================================================================
@@ -603,6 +663,7 @@ CREATE TRIGGER update_showings_timestamp
 -- - lead_activities (activity timeline for leads)
 -- - property_lead_assignments (link properties to leads)
 -- - showings (property viewing appointments)
+-- - team_invitations (team member invitations with token-based acceptance)
 --
 -- User Roles:
 -- - super_admin: Platform owner, manages all companies and users

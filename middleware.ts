@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
 
   // If no user and trying to access protected route, redirect to login
   if (!user && isProtectedRoute) {
-    const loginUrl = new URL('/(auth)/login', request.url)
+    const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirectedFrom', pathname)
     return Response.redirect(loginUrl)
   }

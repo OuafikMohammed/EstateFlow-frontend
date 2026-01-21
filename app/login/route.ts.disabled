@@ -1,3 +1,0 @@
-// This file intentionally left empty
-// Route handling is done via app/login/page.tsx
-export const dynamic = 'force-dynamic';

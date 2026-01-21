@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { motion, useScroll } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -20,12 +20,98 @@ import {
   MapPin,
   Home,
   Award,
+  LogOut,
+  Settings,
 } from "lucide-react"
 import Image from "next/image"
 import { HeroScene } from "@/components/3d/hero-scene"
+import { createClient } from "@/lib/supabase/client"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { LogoutButton } from "@/components/logout-button"
+
+interface UserProfile {
+  full_name?: string
+  email?: string
+  role?: string
+  company_id?: string
+}
+
+interface Company {
+  id?: string
+  name?: string
+}
 
 export default function LandingPage() {
   const { scrollYProgress } = useScroll()
+  const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [company, setCompany] = useState<Company | null>(null)
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+
+        setUser(user)
+
+        if (user) {
+          // Fetch user profile
+          const { data: profileData, error: profileError } = await supabase
+            .from("profiles")
+            .select("full_name, email, role, company_id")
+            .eq("id", user.id)
+            .single()
+
+          if (profileError) {
+            console.error("Profile fetch error:", profileError)
+          }
+
+          setProfile(profileData)
+
+          // Fetch company if company_id exists
+          if (profileData?.company_id) {
+            const { data: companyData, error: companyError } = await supabase
+              .from("companies")
+              .select("id, name")
+              .eq("id", profileData.company_id)
+              .single()
+
+            if (companyError) {
+              console.error("Company fetch error:", companyError)
+            }
+
+            setCompany(companyData)
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    getUser()
+  }, [supabase])
+
+  const getInitials = (name?: string | null, email?: string | null): string => {
+    const displayName = name || email
+    if (!displayName) return "U"
+    return displayName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+  }
 
   const features = [
     {
@@ -159,15 +245,66 @@ export default function LandingPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Button variant="ghost" asChild>
-                <Link href="/login">Sign In</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/register">
-                  Get Started
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </Link>
-              </Button>
+              {loading ? (
+                <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+              ) : user && profile ? (
+                <div className="flex items-center gap-3">
+                  {/* User Info Card */}
+                  <Card className="hidden sm:flex items-center gap-3 px-4 py-2 bg-card border border-border">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-sm font-semibold">
+                      {getInitials(profile.full_name, profile.email)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{profile.full_name || "User"}</p>
+                      <p className="text-xs text-muted-foreground truncate">{profile.role || "Agent"}</p>
+                    </div>
+                  </Card>
+
+                  {/* Profile Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                      >
+                        <span className="text-white text-sm font-semibold">
+                          {getInitials(profile.full_name, profile.email)}
+                        </span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <div className="p-3 border-b border-border">
+                        <p className="text-sm font-semibold text-foreground">{profile.full_name || "User"}</p>
+                        <p className="text-xs text-muted-foreground">{profile.email}</p>
+                        {company && <p className="text-xs text-muted-foreground mt-1">{company.name}</p>}
+                      </div>
+                      <DropdownMenuItem asChild>
+                        <Link href="/settings" className="cursor-pointer">
+                          <Settings className="w-4 h-4 mr-2" />
+                          Settings
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <LogoutButton variant="ghost" size="sm" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950" showIcon={false} />
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ) : (
+                <>
+                  <Button variant="ghost" asChild>
+                    <Link href="/login">Sign In</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href="/register">
+                      Get Started
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -201,7 +338,7 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <Button size="lg" className="text-lg px-8 h-14" asChild>
-                <Link href="/register">
+                <Link href="/signup">
                   Start Free Trial
                   <ChevronRight className="w-5 h-5 ml-2" />
                 </Link>

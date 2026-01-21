@@ -40,9 +40,25 @@ export async function createClient() {
  * - Account recovery
  */
 export function createAdminClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  // Validate environment variables
+  if (!supabaseUrl) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is not set in environment variables')
+  }
+  if (!serviceRoleKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set in environment variables')
+  }
+
+  // Validate key format (JWT tokens have 3 parts separated by dots)
+  if (!serviceRoleKey.includes('.')) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY appears to be invalid - missing JWT format')
+  }
+
   return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    supabaseUrl,
+    serviceRoleKey,
     {
       auth: {
         autoRefreshToken: false,

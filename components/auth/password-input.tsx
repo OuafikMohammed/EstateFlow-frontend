@@ -1,67 +1,85 @@
-// File: components/auth/password-input.tsx
-// Purpose: Reusable password input with show/hide toggle
-
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
 
-interface PasswordInputProps {
-  label: string
-  placeholder: string
-  value: string
-  onChange: (value: string) => void
-  error?: string
-  disabled?: boolean
+export interface PasswordInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  showStrength?: boolean
 }
 
-export function PasswordInput({
-  label,
-  placeholder,
-  value,
-  onChange,
-  error,
-  disabled,
-}: PasswordInputProps) {
+export const PasswordInput = React.forwardRef<
+  HTMLInputElement,
+  PasswordInputProps
+>(({ className = '', showStrength = true, ...props }, ref) => {
   const [showPassword, setShowPassword] = useState(false)
+  const password = (props.value as string) || ''
+
+  const getPasswordStrength = (pwd: string) => {
+    if (!pwd) return { label: '', color: 'bg-gray-300', strength: 0 }
+
+    let strength = 0
+    if (pwd.length >= 8) strength++
+    if (pwd.length >= 12) strength++
+    if (/[A-Z]/.test(pwd)) strength++
+    if (/[0-9]/.test(pwd)) strength++
+    if (/[^A-Za-z0-9]/.test(pwd)) strength++
+
+    const strengthMap = {
+      1: { label: 'Weak', color: 'bg-red-500', strength: 1 },
+      2: { label: 'Fair', color: 'bg-orange-500', strength: 2 },
+      3: { label: 'Good', color: 'bg-yellow-500', strength: 3 },
+      4: { label: 'Strong', color: 'bg-blue-500', strength: 4 },
+      5: { label: 'Very Strong', color: 'bg-green-500', strength: 5 },
+    }
+
+    return strengthMap[strength as keyof typeof strengthMap] || { label: '', color: 'bg-gray-300', strength: 0 }
+  }
+
+  const strength = getPasswordStrength(password)
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <Label htmlFor={label} className="text-sm font-medium">
-          {label}
-        </Label>
-      </div>
       <div className="relative">
-        <Input
-          id={label}
+        <input
           type={showPassword ? 'text' : 'password'}
-          placeholder={placeholder}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          disabled={disabled}
-          className={`pr-10 ${error ? 'border-red-500 focus:border-red-500' : ''}`}
+          className={`w-full px-3 py-2 bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-md text-[var(--color-text)] placeholder-[var(--color-muted-foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10 ${className}`}
+          ref={ref}
+          {...props}
         />
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="sm"
-          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
           onClick={() => setShowPassword(!showPassword)}
-          disabled={disabled}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-text)] transition-colors"
           tabIndex={-1}
         >
           {showPassword ? (
-            <EyeOff className="h-4 w-4 text-gray-500" />
+            <EyeOff className="w-4 h-4" />
           ) : (
-            <Eye className="h-4 w-4 text-gray-500" />
+            <Eye className="w-4 h-4" />
           )}
-        </Button>
+        </button>
       </div>
-      {error && <p className="text-sm text-red-500">{error}</p>}
+
+      {showStrength && password && (
+        <div className="space-y-1">
+          <div className="flex gap-1">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className={`h-1 flex-1 rounded-full ${
+                  i < strength.strength ? strength.color : 'bg-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+          <p className="text-xs text-[var(--color-muted-foreground)]">
+            Strength: <span className="text-blue-400">{strength.label}</span>
+          </p>
+        </div>
+      )}
     </div>
   )
-}
+})
+
+PasswordInput.displayName = 'PasswordInput'

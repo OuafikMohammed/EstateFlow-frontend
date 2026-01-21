@@ -106,6 +106,7 @@ export default function SettingsPage() {
                         value={user?.fullName || ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                         disabled
+                        readOnly
                       />
                     </div>
                     <div className="space-y-2">
@@ -118,6 +119,7 @@ export default function SettingsPage() {
                         value={user?.email || ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                         disabled
+                        readOnly
                       />
                     </div>
                     <div className="space-y-2">
@@ -126,7 +128,7 @@ export default function SettingsPage() {
                       </Label>
                       <Input
                         id="phone"
-                        value={user?.phone || ""}
+                        defaultValue={user?.phone || ""}
                         placeholder="Not set"
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                       />
@@ -140,6 +142,7 @@ export default function SettingsPage() {
                         value={user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                         disabled
+                        readOnly
                       />
                     </div>
                   </div>
@@ -177,6 +180,7 @@ export default function SettingsPage() {
                         value={user?.companyName || ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                         disabled
+                        readOnly
                       />
                     </div>
                     <div className="space-y-2">
@@ -188,6 +192,7 @@ export default function SettingsPage() {
                         value={user?.companyId || ""}
                         className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                         disabled
+                        readOnly
                       />
                     </div>
                     <div className="space-y-2">

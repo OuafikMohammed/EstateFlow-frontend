@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { LayoutDashboard, Home, Users, BarChart3, SettingsIcon, Menu, X, Calendar, UserCheck } from "lucide-react"
+import { ProfileCard } from "./profile-card"
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -91,17 +92,7 @@ export function Sidebar() {
           </nav>
 
           {/* User Profile Card */}
-          <div className="pt-6 border-t border-[var(--color-border)]">
-            <div className="flex items-center gap-3 p-3 bg-[var(--color-bg-card)] rounded-lg">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[var(--color-primary-gold)] to-[var(--color-accent)] flex items-center justify-center">
-                <span className="text-sm font-bold text-[var(--color-bg-dark)]">AE</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[var(--color-text-light)] truncate">Ahmed El Mansouri</p>
-                <p className="text-xs text-[var(--color-muted-foreground)] truncate">Senior Agent</p>
-              </div>
-            </div>
-          </div>
+          <ProfileCard />
         </div>
       </motion.aside>
 
