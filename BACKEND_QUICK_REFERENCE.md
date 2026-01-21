@@ -48,8 +48,8 @@
 4. Click **Google** to expand
 5. Toggle **Google Enabled** to **ON**
 6. Enter credentials:
-   - Client ID: `6384997967-qbihtl5gl050nq19tcc3tfhiiusrfmot.apps.googleusercontent.com`
-   - Client Secret: `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`
+   - Client ID: 
+   - Client Secret:
 7. Click **Save**
 
 After this, Google OAuth will work!
