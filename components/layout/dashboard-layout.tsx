@@ -1,8 +1,12 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { Navbar } from "./navbar"
+import dynamic from "next/dynamic"
 import { Sidebar } from "./sidebar"
+
+const Navbar = dynamic(() => import("./navbar").then((mod) => ({ default: mod.Navbar })), {
+  ssr: false,
+})
 
 interface DashboardLayoutProps {
   children: ReactNode

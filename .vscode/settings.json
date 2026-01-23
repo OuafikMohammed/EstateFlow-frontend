@@ -10,5 +10,22 @@
   "tailwindCSS.lint.invalidScreen": "ignore",
   "tailwindCSS.lint.invalidTailwindDirective": "ignore",
   "tailwindCSS.lint.invalidVariant": "ignore",
-  "tailwindCSS.lint.recommendedVariantOrder": "ignore"
+  "tailwindCSS.lint.recommendedVariantOrder": "ignore",
+  "modelContextProtocol.servers": {
+    "com.supabase/mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref",
+        "uozchnrhxeiyywyvbyxb",
+        "--features",
+        "database,storage"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_c5809f68f3755fd294cf2f09f09e0f618c691fb5"
+      }
+    }
+  }
 }

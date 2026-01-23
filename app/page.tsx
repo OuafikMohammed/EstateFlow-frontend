@@ -70,10 +70,10 @@ export default function LandingPage() {
             .from("profiles")
             .select("full_name, email, role, company_id")
             .eq("id", user.id)
-            .single()
+            .maybeSingle()
 
           if (profileError) {
-            console.error("Profile fetch error:", profileError)
+            console.error("Profile fetch error:", profileError.message || profileError.code || profileError)
           }
 
           setProfile(profileData)
@@ -87,7 +87,7 @@ export default function LandingPage() {
               .single()
 
             if (companyError) {
-              console.error("Company fetch error:", companyError)
+              console.error("Company fetch error:", companyError.message || companyError.code || companyError)
             }
 
             setCompany(companyData)

@@ -112,6 +112,11 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
     try {
       const formData = new FormData()
 
+      // Add user email for unauthenticated new user verification
+      if (userEmail) {
+        formData.append('userEmail', userEmail)
+      }
+
       // Add logo if present
       if (logoFile) {
         formData.append('logo', logoFile)
@@ -128,11 +133,18 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
       const response = await fetch('/api/onboarding/complete', {
         method: 'POST',
         body: formData,
+        credentials: 'include',
       })
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.message || 'Failed to complete onboarding')
+        const errorMessage = data.message || `Server error: ${response.statusText}`
+        console.error('[ONBOARDING API ERROR]', {
+          status: response.status,
+          message: errorMessage,
+          data,
+        })
+        throw new Error(errorMessage)
       }
 
       // Redirect to dashboard

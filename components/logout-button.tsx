@@ -35,11 +35,16 @@ export function LogoutButton({
       });
       router.push("/login");
     } catch (error) {
+      console.error('[LOGOUT ERROR]', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        error,
+      });
       toast({
         title: "Error",
         description: "Failed to logout. Please try again.",
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
     }
   };

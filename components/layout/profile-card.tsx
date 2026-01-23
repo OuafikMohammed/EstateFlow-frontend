@@ -36,10 +36,10 @@ export function ProfileCard() {
             .from("profiles")
             .select("id, full_name, email, role, company_id")
             .eq("id", user.id)
-            .single()
+            .maybeSingle()
 
           if (profileError) {
-            console.error("Profile fetch error:", profileError)
+            console.error("Profile fetch error:", profileError.message || profileError.code || profileError)
             setLoading(false)
             return
           }
@@ -55,7 +55,7 @@ export function ProfileCard() {
               .single()
 
             if (companyError) {
-              console.error("Company fetch error:", companyError)
+              console.error("Company fetch error:", companyError.message || companyError.code || companyError)
             }
 
             setCompany(companyData)

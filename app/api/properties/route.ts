@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       return rateLimitResponse
     }
 
-    const supabase = await createClient()
+    const supabase = await createClient(request)
 
     // Get current user
     const {
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       return rateLimitResponse
     }
 
-    const supabase = await createClient()
+    const supabase = await createClient(request)
 
     // Get current user
     const {

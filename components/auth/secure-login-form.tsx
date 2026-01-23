@@ -14,7 +14,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -30,6 +30,7 @@ interface LoginFormProps {
 
 export function SecureLoginForm({ onSuccess }: LoginFormProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -158,14 +159,20 @@ export function SecureLoginForm({ onSuccess }: LoginFormProps) {
     }
   }
 
-  // Load remembered email on mount
+  // Load remembered email on mount and check for URL errors
   React.useEffect(() => {
     const remembered = localStorage.getItem('rememberEmail')
     if (remembered) {
       setFormData(prev => ({ ...prev, email: remembered }))
       setRememberMe(true)
     }
-  }, [])
+
+    // Check for error in URL params (from OAuth callback)
+    const errorParam = searchParams.get('error')
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam))
+    }
+  }, [searchParams])
 
   return (
     <Card className="w-full max-w-md border-0 shadow-lg">

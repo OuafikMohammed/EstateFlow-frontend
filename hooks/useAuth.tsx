@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClient } from "@/lib/supabase/client"
 
 export interface User {
   id: string
@@ -24,93 +23,44 @@ export function useAuth() {
     const fetchUser = async () => {
       try {
         setLoading(true)
-        const supabase = createClient()
 
-        // Get current auth user
-        const {
-          data: { user: authUser },
-          error: authError,
-        } = await supabase.auth.getUser()
+        // Fetch user profile from API endpoint
+        const response = await fetch('/api/auth/profile', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
 
-        if (authError) {
-          console.error("Auth error:", authError)
-          setUser(null)
-          setError(authError)
-          return
-        }
+        if (!response.ok) {
+          if (response.status === 401) {
+            // User is not authenticated
+            console.log('[useAuth] User not authenticated')
+            setUser(null)
+            setError(null)
+            return
+          }
 
-        if (!authUser) {
-          // User is not logged in
-          setUser(null)
-          return
-        }
-
-        // Fetch user profile data
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select(
-            `
-            id,
-            full_name,
-            company_id,
-            role,
-            is_active,
-            avatar_url,
-            phone
-          `
-          )
-          .eq("id", authUser.id)
-          .single()
-
-        if (profileError) {
-          console.error("Profile fetch error:", {
-            code: profileError.code,
-            message: profileError.message,
-            details: profileError.details,
-            hint: profileError.hint,
+          const errorData = await response.json().catch(() => ({ message: 'Unknown error' }))
+          const errorMessage = errorData.message || `Server error: ${response.statusText}`
+          console.error('[useAuth] Profile fetch error:', {
+            status: response.status,
+            message: errorMessage,
           })
-          setUser(null)
-          setError(profileError)
-          return
+          throw new Error(errorMessage)
         }
 
-        if (!profileData) {
-          console.error("No profile data found for user:", authUser.id)
-          setUser(null)
-          return
-        }
-
-        // Fetch company data separately
-        const { data: companyData, error: companyError } = await supabase
-          .from("companies")
-          .select("id, name")
-          .eq("id", profileData.company_id)
-          .single()
-
-        if (companyError) {
-          console.warn("Company fetch warning:", companyError.message)
-          // Don't fail if company fetch fails, just continue without company name
-        }
-
-        // Map to User interface
-        const userData: User = {
-          id: authUser.id,
-          email: authUser.email || "",
-          fullName: profileData.full_name || undefined,
-          companyId: profileData.company_id,
-          companyName: companyData?.name || undefined,
-          role: profileData.role,
-          isActive: profileData.is_active,
-          avatarUrl: profileData.avatar_url || undefined,
-          phone: profileData.phone || undefined,
-        }
-
-        setUser(userData)
+        const data = await response.json()
+        setUser(data.user)
         setError(null)
       } catch (err) {
         const e = err instanceof Error ? err : new Error(String(err))
+        console.error('[useAuth ERROR]', {
+          message: e.message,
+          stack: e.stack,
+        })
         setError(e)
-        console.error("useAuth error:", e)
         setUser(null)
       } finally {
         setLoading(false)

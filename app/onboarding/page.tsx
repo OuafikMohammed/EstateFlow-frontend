@@ -23,11 +23,11 @@ export default function OnboardingPage() {
           error: authError,
         } = await supabase.auth.getUser()
 
-        if (authError || !authUser) {
-          // Check for email in URL params (from signup flow)
-          const emailFromParams = searchParams.get('email')
-          const companyFromParams = searchParams.get('company')
+        // Extract params once for use throughout the component
+        const emailFromParams = searchParams.get('email')
+        const companyFromParams = searchParams.get('company')
 
+        if (authError || !authUser) {
           if (emailFromParams && companyFromParams) {
             setUser({
               email: emailFromParams,
@@ -51,14 +51,12 @@ export default function OnboardingPage() {
           .from('companies')
           .select('id, name')
           .eq('created_by', authUser.id)
-          .single()
+          .maybeSingle()
 
         if (companyError) {
           console.error('[COMPANY FETCH ERROR]', {
-            error: companyError,
+            error: companyError.message || companyError.code || companyError,
             userId: authUser.id,
-            message: companyError.message,
-            code: companyError.code,
           })
         }
 

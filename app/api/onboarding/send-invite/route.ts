@@ -15,7 +15,7 @@ const inviteSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = await createClient(request)
 
     // Get current user
     const {

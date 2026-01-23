@@ -8,26 +8,72 @@
 import { NextRequest } from 'next/server'
 import { createErrorResponse, createSecureResponse } from '@/lib/security/security-utils'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
-      return createErrorResponse('Unauthorized', 401)
-    }
-
-    // Parse form data
+    // Parse form data first
     const formData = await request.formData()
+    const userEmailFromForm = formData.get('userEmail') as string | null
     const logo = formData.get('logo') as File | null
     const companyDetailsStr = formData.get('companyDetails') as string
     const inviteEmail = formData.get('inviteEmail') as string | null
+
+    const supabase = await createClient(request)
+
+    // Try to get current user from session
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    let userId: string | undefined
+
+    if (user) {
+      // Logged-in user
+      userId = user.id
+    } else if (userEmailFromForm) {
+      // New user during signup - verify email exists in profiles
+      // Use admin client to bypass RLS for new user verification
+      try {
+        const admin = createAdminClient()
+        const { data: profiles, error: profileError } = await admin
+          .from('profiles')
+          .select('id')
+          .eq('email', userEmailFromForm)
+
+        console.log('[ONBOARDING PROFILE LOOKUP]', {
+          email: userEmailFromForm,
+          foundProfiles: profiles?.length || 0,
+          profileError: profileError?.message,
+        })
+
+        if (profileError) {
+          console.error('[ONBOARDING PROFILE ERROR]', {
+            email: userEmailFromForm,
+            error: profileError.message,
+            code: profileError.code,
+          })
+          return createErrorResponse('Unauthorized', 401)
+        }
+
+        if (!profiles || profiles.length === 0) {
+          console.error('[ONBOARDING NO PROFILE]', {
+            email: userEmailFromForm,
+          })
+          return createErrorResponse('Unauthorized', 401)
+        }
+
+        userId = profiles[0].id
+      } catch (err) {
+        console.error('[ONBOARDING ADMIN CLIENT ERROR]', {
+          email: userEmailFromForm,
+          error: err instanceof Error ? err.message : String(err),
+        })
+        return createErrorResponse('Unauthorized', 401)
+      }
+    } else {
+      return createErrorResponse('Unauthorized', 401)
+    }
 
     interface CompanyDetails {
       industry?: string
@@ -50,7 +96,7 @@ export async function POST(request: NextRequest) {
     // Upload logo if present
     if (logo) {
       try {
-        const fileName = `${user.id}-${Date.now()}-${logo.name}`
+        const fileName = `${userId}-${Date.now()}-${logo.name}`
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('company-logos')
           .upload(fileName, logo, {
@@ -76,22 +122,36 @@ export async function POST(request: NextRequest) {
     }
 
     // Update company with onboarding details
+    // Note: Only update columns that exist in the schema
+    const updatePayload: Record<string, any> = {
+      logo_url: logoUrl,
+      updated_at: new Date().toISOString(),
+    }
+
+    // Add optional fields if they exist in the form
+    if (companyDetails.phone) {
+      updatePayload.phone = companyDetails.phone
+    }
+    if (companyDetails.address) {
+      updatePayload.address = companyDetails.address
+    }
+
     const { error: updateError } = await supabase
       .from('companies')
-      .update({
-        logo_url: logoUrl,
-        industry: companyDetails.industry || null,
-        team_size: companyDetails.teamSize || null,
-        phone: companyDetails.phone || null,
-        address: companyDetails.address || null,
-        onboarding_completed: true,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('created_by', user.id)
+      .update(updatePayload)
+      .eq('created_by', userId)
 
     if (updateError) {
-      console.error('[UPDATE COMPANY ERROR]', updateError)
-      return createErrorResponse('Failed to save company details', 400)
+      console.error('[UPDATE COMPANY ERROR]', {
+        message: updateError.message,
+        code: updateError.code,
+        details: updateError.details,
+        userId: userId,
+      })
+      return createErrorResponse(
+        `Failed to save company details: ${updateError.message || 'Unknown error'}`,
+        400
+      )
     }
 
     // Send invite if email provided

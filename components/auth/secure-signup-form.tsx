@@ -13,7 +13,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -38,6 +38,7 @@ interface SignupFormProps {
 
 export function SecureSignupForm({ onSuccess }: SignupFormProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -163,6 +164,14 @@ export function SecureSignupForm({ onSuccess }: SignupFormProps) {
       setLoading(false)
     }
   }
+
+  // Check for URL errors (from OAuth callback) on mount
+  React.useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam))
+    }
+  }, [searchParams])
 
   return (
     <Card className="w-full max-w-md border-0 shadow-lg">
