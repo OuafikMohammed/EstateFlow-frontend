@@ -1,95 +1,49 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { PropertyCard } from "@/components/property/property-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Search } from "lucide-react"
+import { Plus, Search, Loader2, Settings } from "lucide-react"
 import Link from "next/link"
+import { useProperties, useCurrentUserProfile } from "@/hooks/use-data"
 
 export default function PropertiesPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [propertyType, setPropertyType] = useState("all")
-  const [sortBy, setSortBy] = useState("date")
+  const [propertyStatus, setPropertyStatus] = useState("all")
+  const [sortBy, setSortBy] = useState("created_at")
+  const [page, setPage] = useState(1)
+  const [userId, setUserId] = useState<string | null>(null)
 
-  // Mock properties data
-  const properties = [
-    {
-      id: "1",
-      title: "Modern 3BR Apartment in Anfa",
-      price: 2500000,
-      location: "Casablanca, Morocco",
-      bedrooms: 3,
-      bathrooms: 2,
-      area: 120,
-      status: "Available" as const,
-      images: ["/modern-luxury-apartment.png"],
-      type: "Apartment",
-    },
-    {
-      id: "2",
-      title: "Luxury Villa with Sea View",
-      price: 8500000,
-      location: "Rabat, Morocco",
-      bedrooms: 5,
-      bathrooms: 4,
-      area: 350,
-      status: "Available" as const,
-      images: ["/luxury-villa-sea-view.jpg"],
-      type: "House",
-    },
-    {
-      id: "3",
-      title: "Commercial Space Downtown",
-      price: 4200000,
-      location: "Marrakech, Morocco",
-      bedrooms: 0,
-      bathrooms: 2,
-      area: 200,
-      status: "Reserved" as const,
-      images: ["/commercial-office-space.png"],
-      type: "Commercial",
-    },
-    {
-      id: "4",
-      title: "Penthouse with Panoramic Views",
-      price: 6800000,
-      location: "Casablanca, Morocco",
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 280,
-      status: "Available" as const,
-      images: ["/penthouse-luxury-apartment.jpg"],
-      type: "Apartment",
-    },
-    {
-      id: "5",
-      title: "Beachfront Property",
-      price: 12000000,
-      location: "Tangier, Morocco",
-      bedrooms: 6,
-      bathrooms: 5,
-      area: 450,
-      status: "Sold" as const,
-      images: ["/beachfront-luxury-property.jpg"],
-      type: "House",
-    },
-    {
-      id: "6",
-      title: "Investment Land Plot",
-      price: 3500000,
-      location: "Agadir, Morocco",
-      bedrooms: 0,
-      bathrooms: 0,
-      area: 1000,
-      status: "Available" as const,
-      images: ["/land-plot-investment.jpg"],
-      type: "Land",
-    },
-  ]
+  // Get current user
+  const { data: userProfile } = useCurrentUserProfile()
+
+  // Set user ID when available
+  useEffect(() => {
+    if (userProfile?.id) {
+      setUserId(userProfile.id)
+    }
+  }, [userProfile])
+
+  // Fetch properties from API
+  const { data: propertiesData, isLoading, error, refetch } = useProperties({
+    page,
+    limit: 12,
+    propertyType: propertyType !== "all" ? propertyType : undefined,
+    status: propertyStatus !== "all" ? propertyStatus : undefined,
+    sortBy,
+    sortOrder: "desc",
+    searchQuery: searchQuery || undefined,
+  })
+
+  const properties = propertiesData?.items || []
+  const total = propertiesData?.total || 0
+  const pages = propertiesData?.pages || 0
+
 
   return (
     <DashboardLayout>
@@ -98,23 +52,31 @@ export default function PropertiesPage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-serif font-bold text-[var(--color-text-light)] mb-2">Properties</h1>
-            <p className="text-[var(--color-muted-foreground)]">Manage your property listings</p>
+            <p className="text-[var(--color-muted-foreground)]">Browse and view all available properties</p>
           </div>
-          <Link href="/properties/new">
-            <Button className="bg-gradient-to-r from-[var(--color-primary-gold)] to-[var(--color-accent)] text-[var(--color-bg-dark)] hover:opacity-90">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Property
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link href="/properties/manage">
+              <Button className="flex items-center gap-2 border-[var(--color-primary-gold)] bg-transparent text-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/10">
+                <Settings className="w-4 h-4" />
+                Manage My Properties
+              </Button>
+            </Link>
+            <Link href="/properties/new">
+              <Button className="flex items-center gap-2 bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold-dark)]">
+                <Plus className="w-4 h-4" />
+                New Property
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {/* Search and Filters */}
-        <div className="glass rounded-lg p-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-2 relative">
+        {/* Filters */}
+        <div className="glass rounded-xl p-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--color-muted-foreground)]" />
               <Input
-                placeholder="Search by title, location, price..."
+                placeholder="Search by title, location, address..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
@@ -130,6 +92,22 @@ export default function PropertiesPage() {
                 <SelectItem value="house">House</SelectItem>
                 <SelectItem value="commercial">Commercial</SelectItem>
                 <SelectItem value="land">Land</SelectItem>
+                <SelectItem value="condo">Condo</SelectItem>
+                <SelectItem value="multi_family">Multi-Family</SelectItem>
+                <SelectItem value="townhouse">Townhouse</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={propertyStatus} onValueChange={setPropertyStatus}>
+              <SelectTrigger className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]">
+                <SelectValue placeholder="Property Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="available">Available</SelectItem>
+                <SelectItem value="under_contract">Under Contract</SelectItem>
+                <SelectItem value="sold">Sold</SelectItem>
+                <SelectItem value="expired">Expired</SelectItem>
+                <SelectItem value="withdrawn">Withdrawn</SelectItem>
               </SelectContent>
             </Select>
             <Select value={sortBy} onValueChange={setSortBy}>
@@ -137,32 +115,98 @@ export default function PropertiesPage() {
                 <SelectValue placeholder="Sort By" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="date">Date Added</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
+                <SelectItem value="created_at">Date Added</SelectItem>
+                <SelectItem value="price">Price: Low to High</SelectItem>
+                <SelectItem value="price">Price: High to Low</SelectItem>
+                <SelectItem value="title">Title (A-Z)</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[var(--color-primary-gold)]" />
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="glass rounded-xl p-6 bg-red-500/10 border border-red-500/20">
+            <p className="text-red-500">Failed to load properties. Please try again.</p>
+          </div>
+        )}
+
         {/* Property Grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ staggerChildren: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {properties.map((property, index) => (
-            <motion.div
-              key={property.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+        {!isLoading && properties.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ staggerChildren: 0.1 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {properties.map((property, index) => (
+              <motion.div
+                key={property.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <PropertyCard 
+                  property={property} 
+                  isOwner={userId ? property.created_by === userId : false}
+                  onDeleted={() => refetch()}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && properties.length === 0 && (
+          <div className="glass rounded-xl p-12 text-center">
+            <h3 className="text-xl font-serif font-bold text-[var(--color-text-light)] mb-2">No properties found</h3>
+            <p className="text-[var(--color-muted-foreground)] mb-6">Try adjusting your search filters or create a new property</p>
+            <Link href="/properties/new">
+              <Button className="bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold-dark)]">
+                Create First Property
+              </Button>
+            </Link>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!isLoading && pages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-8">
+            <Button
+              variant="outline"
+              disabled={page === 1}
+              onClick={() => setPage(p => Math.max(1, p - 1))}
             >
-              <PropertyCard property={property} />
-            </motion.div>
-          ))}
-        </motion.div>
+              Previous
+            </Button>
+            <div className="flex items-center gap-2">
+              {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
+                <Button
+                  key={p}
+                  variant={page === p ? "default" : "outline"}
+                  onClick={() => setPage(p)}
+                  className={page === p ? "bg-[var(--color-primary-gold)]" : ""}
+                >
+                  {p}
+                </Button>
+              ))}
+            </div>
+            <Button
+              variant="outline"
+              disabled={page === pages}
+              onClick={() => setPage(p => Math.min(pages, p + 1))}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   )

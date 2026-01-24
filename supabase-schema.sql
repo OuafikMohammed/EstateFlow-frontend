@@ -379,12 +379,9 @@ CREATE POLICY "Agents and COMPANY_ADMIN can create properties"
     (SELECT role FROM public.profiles WHERE id = auth.uid()) IN ('agent', 'company_admin')
   );
 
-CREATE POLICY "Company users can update properties"
+CREATE POLICY "Users can update their own properties"
   ON public.properties FOR UPDATE
-  USING (
-    company_id = (SELECT company_id FROM public.profiles WHERE id = auth.uid()) AND
-    (SELECT role FROM public.profiles WHERE id = auth.uid()) IN ('company_admin', 'agent')
-  );
+  USING (created_by = auth.uid());
 
 CREATE POLICY "Users can delete their own properties"
   ON public.properties FOR DELETE

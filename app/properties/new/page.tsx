@@ -9,17 +9,22 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { ArrowLeft, ArrowRight, Upload, X } from "lucide-react"
+import { ArrowLeft, ArrowRight, X, AlertCircle, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { ImageUpload } from "@/components/properties/image-upload"
+import { propertiesApi } from "@/lib/utils/api"
 
 export default function NewPropertyPage() {
   const router = useRouter()
   const [step, setStep] = useState(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
     type: "",
-    status: "Available",
+    status: "available",
     price: "",
     city: "",
     address: "",
@@ -53,10 +58,58 @@ export default function NewPropertyPage() {
     if (step > 1) setStep(step - 1)
   }
 
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log("Property data:", formData)
-    router.push("/properties")
+  const handleSubmit = async () => {
+    try {
+      setSubmitError(null)
+      setIsSubmitting(true)
+
+      // Validate required fields
+      if (!formData.title || !formData.type || !formData.price || !formData.city) {
+        setSubmitError("Please fill in all required fields")
+        setStep(1)
+        return
+      }
+
+      // Validate minimum 3 images
+      if (formData.images.length < 3) {
+        setSubmitError("Please upload at least 3 photos (you can upload up to 10)")
+        setStep(3)
+        return
+      }
+
+      // Create property object
+      const propertyData = {
+        title: formData.title,
+        property_type: formData.type.toLowerCase(),
+        status: formData.status.toLowerCase(),
+        price: parseFloat(formData.price),
+        city: formData.city,
+        address: formData.address,
+        description: formData.description,
+        bedrooms: formData.bedrooms,
+        bathrooms: formData.bathrooms,
+        area: parseFloat(formData.area) || 0,
+        floor: formData.floor ? parseInt(formData.floor) : null,
+        amenities: formData.amenities,
+        images: formData.images,
+      }
+
+      // Submit to API
+      const response = await propertiesApi.create(propertyData)
+      
+      setSubmitSuccess(true)
+      
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        router.push("/properties")
+      }, 2000)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create property"
+      setSubmitError(errorMessage)
+      console.error("Property creation error:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const updateFormData = (field: string, value: any) => {
@@ -372,38 +425,11 @@ export default function NewPropertyPage() {
               <div className="space-y-4">
                 <h2 className="text-2xl font-serif font-bold text-[var(--color-text-light)] mb-6">Photos & Media</h2>
 
-                <div className="border-2 border-dashed border-[var(--color-border)] rounded-lg p-12 text-center hover:border-[var(--color-primary-gold)] transition-colors cursor-pointer">
-                  <Upload className="w-12 h-12 mx-auto mb-4" style={{ color: "var(--color-primary-gold)" }} />
-                  <p className="text-[var(--color-text-light)] font-semibold mb-2">
-                    Click to upload or drag photos here
-                  </p>
-                  <p className="text-sm text-[var(--color-muted-foreground)]">PNG, JPG up to 10MB (Max 10 photos)</p>
-                </div>
-
-                {formData.images.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {formData.images.map((image, index) => (
-                      <div key={index} className="relative aspect-video rounded-lg overflow-hidden group">
-                        <img
-                          src={image || "/placeholder.svg"}
-                          alt={`Property ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                        <Button
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => {
-                            const newImages = formData.images.filter((_, i) => i !== index)
-                            updateFormData("images", newImages)
-                          }}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <ImageUpload
+                  onImagesUploaded={(urls) => updateFormData("images", urls)}
+                  maxFiles={10}
+                  existingImages={formData.images}
+                />
               </div>
             )}
 
@@ -412,32 +438,78 @@ export default function NewPropertyPage() {
               <div className="space-y-4">
                 <h2 className="text-2xl font-serif font-bold text-[var(--color-text-light)] mb-6">Preview & Publish</h2>
 
-                <div className="border border-[var(--color-border)] rounded-lg p-6 space-y-4">
-                  <div>
-                    <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Title</p>
-                    <p className="text-lg font-semibold text-[var(--color-text-light)]">{formData.title || "N/A"}</p>
+                {/* Success State */}
+                {submitSuccess && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-[var(--color-success)]/10 border border-[var(--color-success)] rounded-lg p-6 text-center"
+                  >
+                    <CheckCircle className="w-12 h-12 mx-auto mb-3 text-[var(--color-success)]" />
+                    <p className="text-lg font-semibold text-[var(--color-text-light)] mb-2">Property Created!</p>
+                    <p className="text-sm text-[var(--color-muted-foreground)]">Redirecting to properties list...</p>
+                  </motion.div>
+                )}
+
+                {/* Error State */}
+                {submitError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 flex items-start gap-3"
+                  >
+                    <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-red-500 mb-1">Error Creating Property</p>
+                      <p className="text-sm text-red-400">{submitError}</p>
+                      <p className="text-xs text-red-400 mt-2">Make sure all required fields are filled</p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Preview */}
+                {!submitSuccess && (
+                  <div className="border border-[var(--color-border)] rounded-lg p-6 space-y-4">
+                    <div>
+                      <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Title</p>
+                      <p className="text-lg font-semibold text-[var(--color-text-light)]">{formData.title || "N/A"}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Type</p>
+                        <p className="text-[var(--color-text-light)]">{formData.type || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Price</p>
+                        <p className="text-[var(--color-text-light)]">
+                          {formData.price ? `${formData.price} DH` : "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Location</p>
+                        <p className="text-[var(--color-text-light)]">{formData.city || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Area</p>
+                        <p className="text-[var(--color-text-light)]">{formData.area ? `${formData.area} m²` : "N/A"}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm text-[var(--color-muted-foreground)] mb-2">Photos ({formData.images.length})</p>
+                      {formData.images.length > 0 ? (
+                        <div className="grid grid-cols-3 gap-2">
+                          {formData.images.slice(0, 3).map((img, i) => (
+                            <div key={i} className="aspect-video rounded overflow-hidden">
+                              <img src={img} alt="" className="w-full h-full object-cover" />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-[var(--color-muted-foreground)]">No photos uploaded</p>
+                      )}
+                    </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Type</p>
-                      <p className="text-[var(--color-text-light)]">{formData.type || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Price</p>
-                      <p className="text-[var(--color-text-light)]">
-                        {formData.price ? `${formData.price} DH` : "N/A"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Location</p>
-                      <p className="text-[var(--color-text-light)]">{formData.city || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-[var(--color-muted-foreground)] mb-1">Area</p>
-                      <p className="text-[var(--color-text-light)]">{formData.area ? `${formData.area} m²` : "N/A"}</p>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             )}
           </motion.div>
@@ -466,9 +538,10 @@ export default function NewPropertyPage() {
           ) : (
             <Button
               onClick={handleSubmit}
-              className="bg-gradient-to-r from-[var(--color-primary-gold)] to-[var(--color-accent)] text-[var(--color-bg-dark)]"
+              disabled={isSubmitting || submitSuccess}
+              className="bg-gradient-to-r from-[var(--color-primary-gold)] to-[var(--color-accent)] text-[var(--color-bg-dark)] disabled:opacity-50"
             >
-              Publish Property
+              {isSubmitting ? "Publishing..." : submitSuccess ? "Published!" : "Publish Property"}
             </Button>
           )}
         </div>

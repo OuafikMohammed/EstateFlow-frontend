@@ -6,12 +6,22 @@ import { StatsCard } from "@/components/dashboard/stats-card"
 import { ChartSection } from "@/components/dashboard/chart-section"
 import { RecentLeadsTable } from "@/components/dashboard/recent-leads-table"
 import { Building2, Users, TrendingUp, Wallet } from "lucide-react"
+import { useDashboardStats } from "@/hooks/use-data"
+
+interface DashboardStats {
+  total_properties: number
+  new_leads: number
+  properties_sold: number
+  total_revenue: number
+}
 
 export default function DashboardPage() {
-  const stats = [
+  const { data: stats, isLoading } = useDashboardStats() as { data: DashboardStats; isLoading: boolean }
+
+  const displayStats = [
     {
       title: "Total Properties",
-      value: 47,
+      value: stats?.total_properties || 0,
       subtitle: "Active Listings",
       icon: Building2,
       trend: { value: 12, isPositive: true },
@@ -19,7 +29,7 @@ export default function DashboardPage() {
     },
     {
       title: "New Leads",
-      value: 23,
+      value: stats?.new_leads || 0,
       subtitle: "This Week",
       icon: Users,
       trend: { value: 8, isPositive: true },
@@ -27,7 +37,7 @@ export default function DashboardPage() {
     },
     {
       title: "Properties Sold",
-      value: 8,
+      value: stats?.properties_sold || 0,
       subtitle: "This Month",
       icon: TrendingUp,
       trend: { value: 3, isPositive: true },
@@ -35,7 +45,7 @@ export default function DashboardPage() {
     },
     {
       title: "Revenue",
-      value: "420,000 DH",
+      value: `${(stats?.total_revenue || 0).toLocaleString()} DH`,
       subtitle: "Total Commissions",
       icon: Wallet,
       trend: { value: 15, isPositive: true },
@@ -74,7 +84,7 @@ export default function DashboardPage() {
           animate="visible"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {stats.map((stat, index) => (
+          {displayStats.map((stat, index) => (
             <motion.div key={index} variants={itemVariants}>
               <StatsCard {...stat} />
             </motion.div>

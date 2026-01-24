@@ -26,7 +26,8 @@ const propertyLimiter = createRateLimiter({
 
 /**
  * GET /api/properties
- * Fetch properties with pagination and filtering
+ * Fetch properties with pagination and filtering - REQUIRES AUTHENTICATION
+ * Supports filters: type, status, city, price range, search, ownership
  */
 export async function GET(request: NextRequest) {
   try {
@@ -38,157 +39,158 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient(request)
 
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
+    // Check authentication - properties only visible to authenticated users
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
     if (authError || !user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized - please log in to view properties', 401)
     }
 
-    // Parse query parameters with validation
+    // Parse query parameters
     const { searchParams } = new URL(request.url)
-    const queryData = {
-      page: searchParams.get('page'),
-      limit: searchParams.get('limit'),
-      sortBy: searchParams.get('sortBy'),
-      sortOrder: searchParams.get('sortOrder'),
-    }
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
+    const limit = Math.min(100, parseInt(searchParams.get('limit') || '12'))
+    const sortBy = searchParams.get('sortBy') || 'created_at'
+    const sortOrder = (searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc'
     
-    const queryValidation = validateRequest(queryData, Schemas.listQuery)
+    // Filter parameters
+    const type = searchParams.get('type')
+    const status = searchParams.get('status')
+    const city = searchParams.get('city')
+    const minPrice = searchParams.get('minPrice')
+    const maxPrice = searchParams.get('maxPrice')
+    const bedrooms = searchParams.get('bedrooms')
+    const q = searchParams.get('q')
+    const ownedByMe = searchParams.get('ownedByMe') === 'true'
 
-    if (!queryValidation.success) {
-      return validationErrorResponse(queryValidation.errors || {})
-    }
-
-    // Type-safe extraction from validated data
-    const validatedQuery = queryValidation.data as {
-      page: number
-      limit: number
-      sortBy: string
-      sortOrder: 'asc' | 'desc'
-    }
-    
-    const { page, limit, sortBy, sortOrder } = validatedQuery
-
-    // Fetch properties with RLS policies
-    const { data: properties, error, count } = await supabase
+    // Build the query
+    let query = supabase
       .from('properties')
       .select('*', { count: 'exact' })
-      .range((page - 1) * limit, page * limit - 1)
+
+    // Filter by ownership if requested
+    if (ownedByMe) {
+      query = query.eq('created_by', user.id)
+    }
+
+    // Apply filters
+    if (type) {
+      query = query.eq('property_type', type)
+    }
+
+    if (status) {
+      query = query.eq('status', status)
+    }
+
+    if (city) {
+      query = query.ilike('city', `%${city}%`)
+    }
+
+    if (minPrice) {
+      query = query.gte('price', parseFloat(minPrice))
+    }
+
+    if (maxPrice) {
+      query = query.lte('price', parseFloat(maxPrice))
+    }
+
+    if (bedrooms) {
+      query = query.eq('bedrooms', parseInt(bedrooms))
+    }
+
+    // Search in title, description, address
+    if (q) {
+      query = query.or(
+        `title.ilike.%${q}%,description.ilike.%${q}%,address.ilike.%${q}%`
+      )
+    }
+
+    // Apply pagination and sorting
+    const { data: properties, error, count } = await query
       .order(sortBy, { ascending: sortOrder === 'asc' })
+      .range((page - 1) * limit, page * limit - 1)
 
     if (error) {
       console.error('Properties fetch error:', error)
-      return createErrorResponse('Failed to fetch properties', 500)
+      return createErrorResponse(`Failed to fetch properties: ${error.message}`, 500)
     }
 
+    const total = count || 0
+    const pages = Math.ceil(total / limit)
+
     return createSecureResponse({
-      success: true,
-      data: properties,
-      pagination: {
-        page,
-        limit,
-        total: count || 0,
-        hasMore: (page - 1) * limit + limit < (count || 0),
-      },
+      items: properties || [],
+      total,
+      page,
+      limit,
+      pages,
     })
   } catch (error: unknown) {
     console.error('Unexpected error:', error)
-    return createErrorResponse('An unexpected error occurred', 500)
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+    return createErrorResponse(errorMessage, 500)
   }
 }
 
 /**
  * POST /api/properties
- * Create new property
+ * Create new property - requires authentication
  */
 export async function POST(request: NextRequest) {
   try {
-    // Check rate limit
-    const rateLimitResponse = propertyLimiter(request)
-    if (rateLimitResponse) {
-      return rateLimitResponse
-    }
-
     const supabase = await createClient(request)
 
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
-      return createErrorResponse('Unauthorized', 401)
-    }
-
-    // Parse and validate request body
+    // Parse request body
     const body = await request.json()
-    const validation = validateRequest(body, Schemas.propertyCreate)
+    
+    console.log('Creating property with data:', body)
 
-    if (!validation.success) {
-      return validationErrorResponse(validation.errors || {})
+    // Get current user - REQUIRED
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return createErrorResponse('Unauthorized - please log in to create a property', 401)
     }
 
-    // Type-safe extraction from validated data
-    const validatedBody = validation.data as {
-      title: string
-      description?: string
-      propertyType: 'house' | 'condo' | 'townhouse' | 'commercial' | 'land' | 'multi_family'
-      price?: number
-      address: string
-      city: string
-      state: string
-      zipCode: string
-      bedrooms?: number
-      bathrooms?: number
-      squareFeet?: number
+    // Extract data
+    const propertyData = {
+      company_id: body.company_id || '00000000-0000-0000-0000-000000000001',
+      created_by: user.id, // Use actual authenticated user ID
+      title: body.title || 'Untitled Property',
+      description: body.description || '',
+      property_type: (body.property_type || body.type || 'apartment').toLowerCase(),
+      status: (body.status || 'available').toLowerCase(),
+      price: body.price ? parseFloat(body.price) : null,
+      address: body.address || '',
+      city: body.city || '',
+      state: body.state || '',
+      zip_code: body.zip_code || body.zipCode || '',
+      bedrooms: body.bedrooms ? parseInt(body.bedrooms) : null,
+      bathrooms: body.bathrooms ? parseFloat(body.bathrooms) : null,
+      square_feet: body.square_feet || body.area ? parseInt(body.area) : null,
+      images: Array.isArray(body.images) ? body.images : [],
     }
 
-    // Get user's company
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('company_id')
-      .eq('id', user.id)
-      .single()
+    console.log('Sanitized property data:', propertyData)
 
-    if (profileError || !profile?.company_id) {
-      return createErrorResponse('User company not found', 400)
-    }
-
-    // Create property
+    // Insert property
     const { data: property, error: createError } = await supabase
       .from('properties')
-      .insert({
-        company_id: profile.company_id,
-        created_by: user.id,
-        title: validatedBody.title,
-        description: validatedBody.description,
-        property_type: validatedBody.propertyType,
-        price: validatedBody.price,
-        address: validatedBody.address,
-        city: validatedBody.city,
-        state: validatedBody.state,
-        zip_code: validatedBody.zipCode,
-        bedrooms: validatedBody.bedrooms,
-        bathrooms: validatedBody.bathrooms,
-        square_feet: validatedBody.squareFeet,
-      })
+      .insert(propertyData)
       .select()
       .single()
 
     if (createError) {
       console.error('Property creation error:', createError)
-      return createErrorResponse('Failed to create property', 500)
+      return createErrorResponse(`Failed to create property: ${createError.message}`, 500)
     }
 
+    console.log('Property created successfully:', property)
     return createSecureResponse({ success: true, data: property }, 201)
   } catch (error: unknown) {
     console.error('Unexpected error:', error)
-    return createErrorResponse('An unexpected error occurred', 500)
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+    return createErrorResponse(errorMessage, 500)
   }
 }
 
