@@ -137,6 +137,7 @@ CREATE TABLE public.properties (
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
   
   CONSTRAINT properties_title_not_empty CHECK (title != ''),
   CONSTRAINT properties_price_positive CHECK (price IS NULL OR price >= 0),
@@ -155,6 +156,10 @@ CREATE INDEX idx_properties_status ON public.properties(status);
 CREATE INDEX idx_properties_property_type ON public.properties(property_type);
 CREATE INDEX idx_properties_city ON public.properties(city);
 CREATE INDEX idx_properties_created_at ON public.properties(created_at DESC);
+CREATE INDEX idx_properties_deleted_at ON public.properties(deleted_at);
+CREATE INDEX idx_properties_company_id_not_deleted ON public.properties(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_properties_created_at_not_deleted ON public.properties(created_at DESC) WHERE deleted_at IS NULL;
+CREATE INDEX idx_properties_status_not_deleted ON public.properties(status) WHERE deleted_at IS NULL;
 
 -- Step 6: Create LEADS table
 -- ============================================================================
