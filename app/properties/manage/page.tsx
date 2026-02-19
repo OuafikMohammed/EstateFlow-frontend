@@ -334,7 +334,7 @@ export default function ManagePropertiesPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {property.price ? `${property.price.toLocaleString()} DH` : "N/A"}
+                        {property.price ? `${property.price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} DH` : "N/A"}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
@@ -399,7 +399,7 @@ export default function ManagePropertiesPage() {
 
                   <div className="flex justify-between items-center pt-2 border-t border-[var(--color-border)]">
                     <p className="font-semibold text-[var(--color-primary-gold)]">
-                      {property.price ? `${property.price.toLocaleString()} DH` : "N/A"}
+                      {property.price ? `${property.price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} DH` : "N/A"}
                     </p>
                     <div className="flex gap-2">
                       <Link href={`/properties/${property.id}/edit`}>

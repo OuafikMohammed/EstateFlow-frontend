@@ -64,23 +64,31 @@ export function CreateClientForm({ onSuccess }: CreateClientFormProps) {
       setLoading(true)
 
       const clientData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        type: formData.type,
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
         status: formData.status,
-        budget_min: formData.budget_min ? parseFloat(formData.budget_min) : undefined,
-        budget_max: formData.budget_max ? parseFloat(formData.budget_max) : undefined,
-        lead_source: formData.lead_source || undefined,
-        agent_assigned: formData.agent_assigned || undefined,
-        preferred_locations: [],
-        preferred_property_types: [],
-        properties_viewed: [],
-        properties_favorited: [],
-        created_at: new Date(),
+        source: formData.lead_source || undefined,
+        budget_min: formData.budget_min ? parseInt(formData.budget_min) : null,
+        budget_max: formData.budget_max ? parseInt(formData.budget_max) : null,
+        preferred_type: [],
+        preferred_location: [],
+        notes: null,
       }
 
-      // await createClient(clientData)  // Firebase function - will be replaced with Supabase
+      // Make API request to create client
+      const response = await fetch('/api/clients', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(clientData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create client')
+      }
 
       toast({
         title: "Success",

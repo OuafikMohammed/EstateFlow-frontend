@@ -33,8 +33,8 @@ export default function PropertiesPage() {
   const { data: propertiesData, isLoading, error, refetch } = useProperties({
     page,
     limit: 12,
-    propertyType: propertyType !== "all" ? propertyType : undefined,
-    status: propertyStatus !== "all" ? propertyStatus : undefined,
+    propertyType: propertyType !== "all" ? (propertyType as any) : undefined,
+    status: propertyStatus !== "all" ? (propertyStatus as any) : undefined,
     sortBy,
     sortOrder: "desc",
     searchQuery: searchQuery || undefined,

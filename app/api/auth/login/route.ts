@@ -57,6 +57,12 @@ export async function POST(request: NextRequest) {
     )
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Login failed'
+    
+    // Log error for debugging
+    console.error('[API /auth/login] Error:', {
+      error: message,
+      timestamp: new Date().toISOString(),
+    })
 
     // Generic error message to prevent user enumeration
     return createErrorResponse('Invalid email or password', 401)

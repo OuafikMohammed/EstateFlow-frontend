@@ -11,11 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowLeft, AlertCircle, CheckCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowLeft, AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ImageUpload } from "@/components/properties/image-upload"
-import { createProperty } from "@/lib/actions/properties"
 
 export default function NewPropertyPage() {
   const router = useRouter()
@@ -23,7 +22,6 @@ export default function NewPropertyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState(false)
-  const [activeTab, setActiveTab] = useState("basic")
   const [formData, setFormData] = useState({
     title: "",
     type: "",
@@ -31,6 +29,7 @@ export default function NewPropertyPage() {
     price: "",
     city: "",
     address: "",
+    state: "",
     zipCode: "",
     country: "",
     latitude: "",
@@ -47,16 +46,16 @@ export default function NewPropertyPage() {
   })
 
   const amenitiesList = [
-    "Air Conditioning",
-    "Balcony",
-    "Elevator",
-    "Security 24/7",
-    "Garden",
-    "Gym",
-    "Pool",
-    "Parking",
-    "Concierge",
-    "Storage Room",
+    "تكييف الهواء",
+    "شرفة",
+    "مصعد",
+    "حماية 24/7",
+    "حديقة",
+    "صالة رياضية",
+    "حمام سباحة",
+    "موقف سيارات",
+    "خدمة البوابة",
+    "غرفة تخزين",
   ]
 
   useEffect(() => {
@@ -76,35 +75,6 @@ export default function NewPropertyPage() {
     }))
   }
 
-  const handleNextTab = () => {
-    if (activeTab === "basic") {
-      // Validate basic info before moving to location
-      if (!formData.title || !formData.type || !formData.price || !formData.city) {
-        setSubmitError("Please fill in all required basic info fields")
-        return
-      }
-      setActiveTab("location")
-      setSubmitError(null)
-    } else if (activeTab === "location") {
-      // Validate location info before moving to media
-      if (!formData.address) {
-        setSubmitError("Address is required")
-        return
-      }
-      setActiveTab("media")
-      setSubmitError(null)
-    }
-  }
-
-  const handlePrevTab = () => {
-    if (activeTab === "location") {
-      setActiveTab("basic")
-    } else if (activeTab === "media") {
-      setActiveTab("location")
-    }
-    setSubmitError(null)
-  }
-
   const handleSubmit = async () => {
     try {
       setSubmitError(null)
@@ -112,44 +82,40 @@ export default function NewPropertyPage() {
 
       // Validate required fields
       if (!formData.title || !formData.type || !formData.price || !formData.city) {
-        setSubmitError("Please fill in all required fields")
+        setSubmitError("يرجى ملء جميع الحقول المطلوبة")
         return
       }
 
       if (!formData.address) {
-        setSubmitError("Address is required")
+        setSubmitError("العنوان مطلوب")
         return
       }
 
-      // Create property object matching the server action schema
-      const propertyData: any = {
-        type: formData.type.toLowerCase(),
-        transactionType: "sale",
+      // Create property object
+      const propertyData = {
+        title: formData.title,
+        property_type: formData.type.toLowerCase(),
+        status: formData.status.toLowerCase(),
         price: parseFloat(formData.price),
+        city: formData.city,
+        address: formData.address,
+        state: formData.state,
+        zip_code: formData.zipCode,
+        country: formData.country,
+        latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+        longitude: formData.longitude ? parseFloat(formData.longitude) : null,
+        description: formData.description,
         bedrooms: formData.bedrooms || 0,
         bathrooms: formData.bathrooms || 0,
-        status: formData.status.toLowerCase(),
-        address: formData.address,
+        square_feet: formData.area ? parseFloat(formData.area) : 0,
+        floor: formData.floor ? parseInt(formData.floor) : null,
+        year_built: formData.year_built ? parseInt(formData.year_built) : null,
+        lot_size: formData.lot_size || null,
+        amenities: formData.amenities,
+        images: formData.images,
       }
 
-      // Only include optional fields if provided
-      if (formData.area) {
-        propertyData.size = parseFloat(formData.area)
-      }
-
-      if (formData.description && formData.description.length >= 10) {
-        propertyData.description = formData.description
-      }
-
-      if (formData.latitude) {
-        propertyData.latitude = parseFloat(formData.latitude)
-      }
-
-      if (formData.longitude) {
-        propertyData.longitude = parseFloat(formData.longitude)
-      }
-
-      // Call the server action
+      // Placeholder API call
       const response = await createProperty(propertyData)
 
       if (response.success) {
@@ -158,10 +124,10 @@ export default function NewPropertyPage() {
           router.push("/properties")
         }, 2000)
       } else {
-        setSubmitError(response.error?.message || "Failed to create property")
+        setSubmitError(response.error || "فشل إنشاء العقار")
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error creating property"
+      const errorMessage = error instanceof Error ? error.message : "خطأ في إنشاء العقار"
       setSubmitError(errorMessage)
       console.error("Property creation error:", error)
     } finally {
@@ -185,10 +151,10 @@ export default function NewPropertyPage() {
           </Link>
           <div>
             <h1 className="text-3xl font-serif font-bold text-[var(--color-text-light)]">
-              Add New Property
+              إضافة عقار جديد
             </h1>
             <p className="text-[var(--color-muted-foreground)] mt-1">
-              Complete the property information with all details
+              أتمم معلومات العقار بالتفاصيل الكاملة
             </p>
           </div>
         </div>
@@ -211,10 +177,10 @@ export default function NewPropertyPage() {
             >
               <CheckCircle className="w-16 h-16 mx-auto mb-4 text-[var(--color-success)]" />
               <h2 className="text-2xl font-serif font-bold text-[var(--color-text-light)] mb-2">
-                Property Created Successfully!
+                تم إنشاء العقار بنجاح!
               </h2>
               <p className="text-[var(--color-muted-foreground)]">
-                Redirecting to properties list...
+                جاري إعادة التوجيه إلى القائمة...
               </p>
             </motion.div>
           ) : (
@@ -224,19 +190,19 @@ export default function NewPropertyPage() {
                   value="basic"
                   className="text-[var(--color-text-light)] data-[state=active]:bg-[var(--color-primary-gold)] data-[state=active]:text-[var(--color-bg-dark)]"
                 >
-                  Basic Info
+                  البيانات الأساسية
                 </TabsTrigger>
                 <TabsTrigger
-                  value="location"
+                  value="details"
                   className="text-[var(--color-text-light)] data-[state=active]:bg-[var(--color-primary-gold)] data-[state=active]:text-[var(--color-bg-dark)]"
                 >
-                  Location
+                  التفاصيل
                 </TabsTrigger>
                 <TabsTrigger
-                  value="media"
+                  value="photos"
                   className="text-[var(--color-text-light)] data-[state=active]:bg-[var(--color-primary-gold)] data-[state=active]:text-[var(--color-bg-dark)]"
                 >
-                  Media
+                  الصور والملفات
                 </TabsTrigger>
               </TabsList>
 
@@ -244,9 +210,9 @@ export default function NewPropertyPage() {
               <TabsContent value="basic" className="space-y-6 mt-6">
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-[var(--color-text-light)] mb-2 block">Property Title *</Label>
+                    <Label className="text-[var(--color-text-light)] mb-2 block">اسم العقار *</Label>
                     <Input
-                      placeholder="Modern Family Home with Pool"
+                      placeholder="مثال: منزل عصري مع حمام سباحة"
                       value={formData.title}
                       onChange={(e) => updateFormData("title", e.target.value)}
                       className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
@@ -255,42 +221,42 @@ export default function NewPropertyPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Property Type *</Label>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">نوع العقار *</Label>
                       <Select value={formData.type} onValueChange={(value) => updateFormData("type", value)}>
                         <SelectTrigger className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="house">House</SelectItem>
-                          <SelectItem value="apartment">Apartment</SelectItem>
-                          <SelectItem value="condo">Condo</SelectItem>
-                          <SelectItem value="townhouse">Townhouse</SelectItem>
-                          <SelectItem value="commercial">Commercial</SelectItem>
-                          <SelectItem value="land">Land</SelectItem>
-                          <SelectItem value="multi_family">Multi-Family</SelectItem>
+                          <SelectItem value="house">منزل</SelectItem>
+                          <SelectItem value="apartment">شقة</SelectItem>
+                          <SelectItem value="condo">شقة فاخرة</SelectItem>
+                          <SelectItem value="townhouse">تاون هاوس</SelectItem>
+                          <SelectItem value="commercial">تجاري</SelectItem>
+                          <SelectItem value="land">أراضي</SelectItem>
+                          <SelectItem value="multi_family">متعدد الوحدات</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Status *</Label>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">الحالة *</Label>
                       <Select value={formData.status} onValueChange={(value) => updateFormData("status", value)}>
                         <SelectTrigger className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="available">Available</SelectItem>
-                          <SelectItem value="under_contract">Under Contract</SelectItem>
-                          <SelectItem value="sold">Sold</SelectItem>
-                          <SelectItem value="expired">Expired</SelectItem>
-                          <SelectItem value="withdrawn">Withdrawn</SelectItem>
+                          <SelectItem value="available">متوفر</SelectItem>
+                          <SelectItem value="under_contract">تحت العقد</SelectItem>
+                          <SelectItem value="sold">مباع</SelectItem>
+                          <SelectItem value="expired">منتهي الصلاحية</SelectItem>
+                          <SelectItem value="withdrawn">مسحوب</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
 
                   <div>
-                    <Label className="text-[var(--color-text-light)] mb-2 block">Price ($) *</Label>
+                    <Label className="text-[var(--color-text-light)] mb-2 block">السعر ($) *</Label>
                     <Input
                       type="number"
                       placeholder="750000"
@@ -300,20 +266,67 @@ export default function NewPropertyPage() {
                     />
                   </div>
 
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">المدينة *</Label>
+                      <Input
+                        placeholder="نيويورك"
+                        value={formData.city}
+                        onChange={(e) => updateFormData("city", e.target.value)}
+                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">الولاية</Label>
+                      <Input
+                        placeholder="NY"
+                        value={formData.state}
+                        onChange={(e) => updateFormData("state", e.target.value)}
+                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">الرمز البريدي</Label>
+                      <Input
+                        placeholder="10001"
+                        value={formData.zipCode}
+                        onChange={(e) => updateFormData("zipCode", e.target.value)}
+                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Tab 2: Details and Location */}
+              <TabsContent value="details" className="space-y-6 mt-6">
+                <div className="space-y-4">
                   <div>
-                    <Label className="text-[var(--color-text-light)] mb-2 block">Description</Label>
+                    <Label className="text-[var(--color-text-light)] mb-2 block">العنوان الكامل *</Label>
+                    <Input
+                      placeholder="123 شارع رئيسي"
+                      value={formData.address}
+                      onChange={(e) => updateFormData("address", e.target.value)}
+                      className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-[var(--color-text-light)] mb-2 block">الوصف</Label>
                     <Textarea
-                      placeholder="Describe the property features, amenities, condition..."
+                      placeholder="وصف العقار والمميزات والحالة..."
                       value={formData.description}
                       onChange={(e) => updateFormData("description", e.target.value)}
-                      rows={5}
+                      rows={4}
                       className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Bedrooms</Label>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">عدد غرف النوم</Label>
                       <div className="flex items-center gap-2">
                         <Button
                           type="button"
@@ -343,7 +356,7 @@ export default function NewPropertyPage() {
                     </div>
 
                     <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Bathrooms</Label>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">عدد دورات المياه</Label>
                       <div className="flex items-center gap-2">
                         <Button
                           type="button"
@@ -375,7 +388,7 @@ export default function NewPropertyPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Square Feet</Label>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">المساحة (قدم مربع)</Label>
                       <Input
                         type="number"
                         placeholder="3500"
@@ -386,7 +399,7 @@ export default function NewPropertyPage() {
                     </div>
 
                     <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Year Built</Label>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">سنة البناء</Label>
                       <Input
                         type="number"
                         placeholder="2020"
@@ -397,8 +410,34 @@ export default function NewPropertyPage() {
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">خط العرض</Label>
+                      <Input
+                        type="number"
+                        placeholder="40.7128"
+                        step="0.0001"
+                        value={formData.latitude}
+                        onChange={(e) => updateFormData("latitude", e.target.value)}
+                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-[var(--color-text-light)] mb-2 block">خط الطول</Label>
+                      <Input
+                        type="number"
+                        placeholder="-74.0060"
+                        step="0.0001"
+                        value={formData.longitude}
+                        onChange={(e) => updateFormData("longitude", e.target.value)}
+                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
+                      />
+                    </div>
+                  </div>
+
                   <div>
-                    <Label className="text-[var(--color-text-light)] mb-3">Amenities</Label>
+                    <Label className="text-[var(--color-text-light)] mb-3">المرافق والخدمات</Label>
                     <div className="grid grid-cols-2 gap-3">
                       {amenitiesList.map((amenity) => (
                         <div key={amenity} className="flex items-center space-x-2">
@@ -417,95 +456,10 @@ export default function NewPropertyPage() {
                 </div>
               </TabsContent>
 
-              {/* Tab 2: Location */}
-              <TabsContent value="location" className="space-y-6 mt-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label className="text-[var(--color-text-light)] mb-2 block">Street Address *</Label>
-                    <Input
-                      placeholder="123 Main Street"
-                      value={formData.address}
-                      onChange={(e) => updateFormData("address", e.target.value)}
-                      className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">City *</Label>
-                      <Input
-                        placeholder="New York"
-                        value={formData.city}
-                        onChange={(e) => updateFormData("city", e.target.value)}
-                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
-                      />
-                    </div>
-
-                    <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">ZIP Code</Label>
-                      <Input
-                        placeholder="10001"
-                        value={formData.zipCode}
-                        onChange={(e) => updateFormData("zipCode", e.target.value)}
-                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Country</Label>
-                      <Input
-                        placeholder="USA"
-                        value={formData.country}
-                        onChange={(e) => updateFormData("country", e.target.value)}
-                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
-                      />
-                    </div>
-
-                    <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Lot Size</Label>
-                      <Input
-                        placeholder="0.5 acres"
-                        value={formData.lot_size}
-                        onChange={(e) => updateFormData("lot_size", e.target.value)}
-                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Latitude</Label>
-                      <Input
-                        type="number"
-                        placeholder="40.7128"
-                        step="0.0001"
-                        value={formData.latitude}
-                        onChange={(e) => updateFormData("latitude", e.target.value)}
-                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
-                      />
-                    </div>
-
-                    <div>
-                      <Label className="text-[var(--color-text-light)] mb-2 block">Longitude</Label>
-                      <Input
-                        type="number"
-                        placeholder="-74.0060"
-                        step="0.0001"
-                        value={formData.longitude}
-                        onChange={(e) => updateFormData("longitude", e.target.value)}
-                        className="bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              {/* Tab 3: Media */}
-              <TabsContent value="media" className="space-y-6 mt-6">
+              {/* Tab 3: Photos */}
+              <TabsContent value="photos" className="space-y-6 mt-6">
                 <div>
-                  <Label className="text-[var(--color-text-light)] mb-3 block">Property Images</Label>
+                  <Label className="text-[var(--color-text-light)] mb-3 block">الصور والملفات</Label>
                   <ImageUpload
                     onImagesUploaded={(urls) => updateFormData("images", urls)}
                     maxFiles={10}
@@ -513,43 +467,66 @@ export default function NewPropertyPage() {
                   />
                 </div>
               </TabsContent>
-
-              {/* Tab Navigation Buttons */}
-              <div className="flex gap-3 justify-between mt-8">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handlePrevTab}
-                  disabled={activeTab === "basic"}
-                  className="border-[var(--color-border)] text-[var(--color-text-light)] disabled:opacity-50"
-                >
-                  <ChevronLeft className="w-4 h-4 mr-2" />
-                  Previous
-                </Button>
-                {activeTab !== "media" ? (
-                  <Button
-                    type="button"
-                    onClick={handleNextTab}
-                    className="bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/90 text-[var(--color-bg-dark)] font-semibold gap-2"
-                  >
-                    Next
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/90 text-[var(--color-bg-dark)] font-semibold gap-2"
-                  >
-                    {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                    {isSubmitting ? "Creating..." : "Create Property"}
-                  </Button>
-                )}
-              </div>
             </Tabs>
           )}
         </div>
+
+        {/* Action Buttons */}
+        {!submitSuccess && (
+          <div className="flex gap-3 justify-end">
+            <Link href="/properties">
+              <Button
+                type="button"
+                variant="outline"
+                className="border-[var(--color-border)] text-[var(--color-text-light)]"
+              >
+                إلغاء
+              </Button>
+            </Link>
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/90 text-[var(--color-bg-dark)] font-semibold gap-2"
+            >
+              {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isSubmitting ? "جاري الإنشاء..." : "إنشاء العقار"}
+            </Button>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   )
+}
+
+// Placeholder server action
+async function createProperty(data: any) {
+  try {
+    // Replace with actual API call
+    const response = await fetch("/api/properties", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: "فشل في إنشاء العقار",
+      }
+    }
+
+    const result = await response.json()
+    return {
+      success: true,
+      id: result.id,
+    }
+  } catch (error) {
+    console.error("Error creating property:", error)
+    return {
+      success: false,
+      error: "حدث خطأ غير متوقع",
+    }
+  }
 }

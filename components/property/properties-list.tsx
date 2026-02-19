@@ -226,7 +226,7 @@ export function PropertiesList({
                 {property.price && (
                   <div className="flex items-center gap-2 mb-4 text-lg font-semibold text-blue-600">
                     <DollarSign className="w-5 h-5" />
-                    ${property.price.toLocaleString()}
+                    ${property.price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </div>
                 )}
 

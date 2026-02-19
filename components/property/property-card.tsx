@@ -203,7 +203,7 @@ export function PropertyCard({ property, isOwner = false, onDeleted }: PropertyC
           </p>
           {property.price && (
             <p className="text-2xl font-serif font-bold" style={{ color: "var(--color-primary-gold)" }}>
-              {property.price.toLocaleString()} DH
+              {property.price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} DH
             </p>
           )}
         </div>

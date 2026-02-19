@@ -114,19 +114,29 @@ export function SecureLoginForm({ onSuccess }: LoginFormProps) {
       })
 
       if (signInError) {
-        console.error('[LOGIN ERROR]', {
+        // Enhanced error logging for debugging
+        console.error('[LOGIN ERROR] Full error object:', signInError)
+        console.error('[LOGIN ERROR] Error details:', {
           message: signInError.message,
           status: signInError.status,
           code: signInError.code,
+          __typename: signInError.__typename,
         })
+        console.error('[LOGIN ERROR] Error keys:', Object.keys(signInError))
         
-        // Provide specific error messages based on error code
-        if (signInError.message?.includes('Invalid login credentials')) {
+        // Provide specific error messages based on error message
+        const errorMsg = (signInError.message || '').toLowerCase()
+        
+        if (errorMsg.includes('invalid credentials') || errorMsg.includes('invalid login')) {
           setError('Invalid email or password')
-        } else if (signInError.message?.includes('Email not confirmed')) {
+        } else if (errorMsg.includes('email not confirmed') || errorMsg.includes('not confirmed')) {
           setError('Please confirm your email before logging in')
-        } else if (signInError.message?.includes('User already registered')) {
+        } else if (errorMsg.includes('already registered')) {
           setError('This email is already registered')
+        } else if (errorMsg.includes('user not found') || errorMsg.includes('not found')) {
+          setError('Invalid email or password')
+        } else if (!errorMsg) {
+          setError('Authentication failed. Please try again.')
         } else {
           setError(signInError.message || 'Authentication failed. Please try again.')
         }
@@ -152,8 +162,13 @@ export function SecureLoginForm({ onSuccess }: LoginFormProps) {
       // Redirect to dashboard
       router.push('/dashboard')
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err)
+      console.error('[LOGIN] Unexpected error:', {
+        error: errorMsg,
+        errorType: err instanceof Error ? 'Error' : typeof err,
+        fullError: err,
+      })
       setError('An error occurred. Please try again.')
-      console.error('Login error:', err)
     } finally {
       setLoading(false)
     }

@@ -199,7 +199,7 @@ export function ClientsTable({ clients, isLoading, onRefresh }: ClientsTableProp
                   </TableCell>
                   <TableCell className="text-sm">
                     {client.budget_min && client.budget_max
-                      ? `$${client.budget_min.toLocaleString()} - $${client.budget_max.toLocaleString()}`
+                      ? `$${client.budget_min.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} - $${client.budget_max.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
                       : "-"}
                   </TableCell>
                   <TableCell className="text-right">

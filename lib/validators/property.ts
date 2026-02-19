@@ -46,6 +46,7 @@ export const createPropertySchema = z.object({
   size: z
     .number()
     .positive('Size must be greater than 0')
+    .optional()
     .describe('Square footage'),
   bedrooms: z
     .number()
@@ -60,6 +61,7 @@ export const createPropertySchema = z.object({
     .string()
     .min(10, 'Description must be at least 10 characters')
     .max(5000, 'Description must not exceed 5000 characters')
+    .optional()
     .describe('Property description'),
   status: PropertyStatusEnum.describe('Property listing status'),
   address: z

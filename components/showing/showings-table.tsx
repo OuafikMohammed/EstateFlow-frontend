@@ -6,10 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Eye, Trash2, Search, Edit } from "lucide-react"
-// Firebase imports removed - using Supabase instead
-// import { Showing } from "@/lib/firebase/services"
-// import { deleteShowing, updateShowing } from "@/lib/firebase/services"
+import { Eye, Trash2, Search, Edit, Check, X, Star } from "lucide-react"
+import { updateShowing, cancelShowing } from "@/lib/actions/showings"
 import {
   Table,
   TableBody,
@@ -24,11 +22,13 @@ import { useToast } from "@/hooks/use-toast"
 interface Showing {
   id: string
   property_id: string
-  agent_id: string
   client_id: string
-  scheduled_date: Date | string
-  status: 'scheduled' | 'completed' | 'cancelled'
+  scheduled_at: Date | string
+  status: "scheduled" | "completed" | "cancelled"
+  interest_level?: string | null
   notes?: string
+  property?: { title: string; address: string }
+  client?: { name: string; phone?: string }
   [key: string]: any
 }
 
@@ -38,10 +38,18 @@ interface ShowingsTableProps {
   onRefresh?: () => void
 }
 
+interface EditingRow {
+  showingId: string
+  field: "status" | "interest_level"
+  value: string | null
+}
+
 export function ShowingsTable({ showings, isLoading, onRefresh }: ShowingsTableProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [filteredShowings, setFilteredShowings] = useState<Showing[]>(showings)
+  const [editingRow, setEditingRow] = useState<EditingRow | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -50,8 +58,10 @@ export function ShowingsTable({ showings, isLoading, onRefresh }: ShowingsTableP
     if (searchQuery) {
       filtered = filtered.filter(
         (showing) =>
-          showing.client_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          showing.property_id.toLowerCase().includes(searchQuery.toLowerCase()),
+          (showing.client?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            showing.property?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            showing.client_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            showing.property_id.toLowerCase().includes(searchQuery.toLowerCase())),
       )
     }
 
@@ -79,22 +89,162 @@ export function ShowingsTable({ showings, isLoading, onRefresh }: ShowingsTableP
 
   const handleDeleteShowing = async (id: string) => {
     try {
-      // await deleteShowing(id)  // Firebase function - will be replaced with Supabase
-      toast({
-        title: "Success",
-        description: "Showing deleted successfully",
-      })
-      if (onRefresh) onRefresh()
+      const result = await cancelShowing(id)
+      if (result.success) {
+        toast({
+          title: "Success",
+          description: "Showing cancelled successfully",
+        })
+        if (onRefresh) onRefresh()
+      } else {
+        toast({
+          title: "Error",
+          description: result.error || "Failed to cancel showing",
+          variant: "destructive",
+        })
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete showing",
+        description: "Failed to cancel showing",
         variant: "destructive",
       })
     }
   }
 
-  const formatDate = (date: Date | any) => {
+  const handleStatusChange = async (showing: Showing, newStatus: string) => {
+    if (editingRow?.showingId === showing.id && editingRow?.field === "status") {
+      // If already editing this field, confirm the change
+      try {
+        setIsUpdating(true)
+        const result = await updateShowing(showing.id, {
+          status: newStatus as "scheduled" | "completed" | "cancelled",
+        })
+
+        if (result.success) {
+          toast({
+            title: "Success",
+            description: "Status updated successfully",
+          })
+          setEditingRow(null)
+          if (onRefresh) onRefresh()
+        } else {
+          toast({
+            title: "Error",
+            description: result.error || "Failed to update status",
+            variant: "destructive",
+          })
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to update status",
+          variant: "destructive",
+        })
+      } finally {
+        setIsUpdating(false)
+      }
+    } else {
+      // Start editing
+      setEditingRow({
+        showingId: showing.id,
+        field: "status",
+        value: newStatus,
+      })
+    }
+  }
+
+  const handleInterestLevelChange = async (showing: Showing, level: string) => {
+    if (editingRow?.showingId === showing.id && editingRow?.field === "interest_level") {
+      // If already editing this field, confirm the change
+      try {
+        setIsUpdating(true)
+        const result = await updateShowing(showing.id, {
+          interest_level: level as "1" | "2" | "3" | "4" | "5",
+        })
+
+        if (result.success) {
+          toast({
+            title: "Success",
+            description: "Interest level updated successfully",
+          })
+          setEditingRow(null)
+          if (onRefresh) onRefresh()
+        } else {
+          toast({
+            title: "Error",
+            description: result.error || "Failed to update interest level",
+            variant: "destructive",
+          })
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to update interest level",
+          variant: "destructive",
+        })
+      } finally {
+        setIsUpdating(false)
+      }
+    } else {
+      // Start editing
+      setEditingRow({
+        showingId: showing.id,
+        field: "interest_level",
+        value: level,
+      })
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingRow(null)
+  }
+
+  const renderStarRating = (level: string | null | undefined, showing: Showing, isEditing: boolean) => {
+    const currentLevel = isEditing && editingRow?.value ? parseInt(editingRow.value) : (level ? parseInt(level) : 0)
+
+    return (
+      <div className="flex gap-1 items-center">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            onClick={() => !isUpdating && handleInterestLevelChange(showing, star.toString())}
+            disabled={isUpdating}
+            className={`transition-colors ${
+              star <= currentLevel ? "text-yellow-400" : "text-gray-300"
+            } hover:text-yellow-400`}
+            title={`${star} star${star !== 1 ? "s" : ""}`}
+          >
+            <Star className="w-4 h-4 fill-current" />
+          </button>
+        ))}
+        {isEditing && editingRow?.showingId === showing.id && editingRow?.field === "interest_level" && (
+          <div className="ml-2 flex gap-1">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => handleInterestLevelChange(showing, editingRow.value || "")}
+              disabled={isUpdating}
+              className="h-6 w-6 p-0"
+            >
+              <Check className="w-3 h-3 text-green-600" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleCancelEdit}
+              disabled={isUpdating}
+              className="h-6 w-6 p-0"
+            >
+              <X className="w-3 h-3 text-red-600" />
+            </Button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const formatDate = (date: Date | string | any) => {
     if (date?.toDate) {
       return date.toDate().toLocaleDateString()
     }
@@ -102,6 +252,13 @@ export function ShowingsTable({ showings, isLoading, onRefresh }: ShowingsTableP
       return date.toLocaleDateString()
     }
     return new Date(date).toLocaleDateString()
+  }
+
+  const formatTime = (date: Date | string | any) => {
+    if (date instanceof Date) {
+      return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+    }
+    return new Date(date).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
   }
 
   if (isLoading) {
@@ -144,19 +301,18 @@ export function ShowingsTable({ showings, isLoading, onRefresh }: ShowingsTableP
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Property ID</TableHead>
-              <TableHead>Client ID</TableHead>
-              <TableHead>Scheduled Date</TableHead>
-              <TableHead>Agent ID</TableHead>
+              <TableHead>Property</TableHead>
+              <TableHead>Client</TableHead>
+              <TableHead>Date & Time</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Notes</TableHead>
+              <TableHead>Interest</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredShowings.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={6} className="text-center py-8">
                   <p className="text-[var(--color-muted-foreground)]">No showings found</p>
                 </TableCell>
               </TableRow>
@@ -169,16 +325,72 @@ export function ShowingsTable({ showings, isLoading, onRefresh }: ShowingsTableP
                   transition={{ delay: index * 0.05 }}
                   className="border-b hover:bg-[var(--color-bg-hover)] transition-colors"
                 >
-                  <TableCell className="font-medium text-sm">{showing.property_id}</TableCell>
-                  <TableCell className="text-sm">{showing.client_id}</TableCell>
-                  <TableCell className="text-sm">{formatDate(showing.scheduled_date)}</TableCell>
-                  <TableCell className="text-sm">{showing.agent_id}</TableCell>
-                  <TableCell>
-                    <Badge className={`${getStatusColor(showing.status)} text-xs font-semibold`}>
-                      {showing.status}
-                    </Badge>
+                  <TableCell className="font-medium text-sm">
+                    <div>
+                      <p className="font-semibold">{showing.property?.title || showing.property_id}</p>
+                      <p className="text-xs text-gray-500">{showing.property?.address || ""}</p>
+                    </div>
                   </TableCell>
-                  <TableCell className="text-sm truncate max-w-xs">{showing.notes || "-"}</TableCell>
+                  <TableCell className="text-sm">
+                    <p className="font-medium">{showing.client?.name || showing.client_id}</p>
+                    {showing.client?.phone && <p className="text-xs text-gray-500">{showing.client.phone}</p>}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    <p>{formatDate(showing.scheduled_at)}</p>
+                    <p className="text-xs text-gray-500">{formatTime(showing.scheduled_at)}</p>
+                  </TableCell>
+                  <TableCell>
+                    {editingRow?.showingId === showing.id && editingRow?.field === "status" ? (
+                      <div className="flex gap-1 items-center">
+                        <Select
+                          value={editingRow.value || showing.status}
+                          onValueChange={(value) =>
+                            setEditingRow({
+                              ...editingRow,
+                              value,
+                            })
+                          }
+                          disabled={isUpdating}
+                        >
+                          <SelectTrigger className="w-32 h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="scheduled">Scheduled</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                            <SelectItem value="no-show">No Show</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleStatusChange(showing, editingRow.value || showing.status)}
+                          disabled={isUpdating}
+                          className="h-6 w-6 p-0"
+                        >
+                          <Check className="w-3 h-3 text-green-600" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={handleCancelEdit} disabled={isUpdating} className="h-6 w-6 p-0">
+                          <X className="w-3 h-3 text-red-600" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Badge
+                        className={`${getStatusColor(showing.status)} text-xs font-semibold cursor-pointer hover:opacity-80`}
+                        onClick={() => handleStatusChange(showing, showing.status)}
+                      >
+                        {showing.status}
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {renderStarRating(
+                      showing.interest_level,
+                      showing,
+                      editingRow?.showingId === showing.id && editingRow?.field === "interest_level"
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -194,7 +406,7 @@ export function ShowingsTable({ showings, isLoading, onRefresh }: ShowingsTableP
                         size="sm"
                         className="text-red-500 hover:text-red-700"
                         onClick={() => handleDeleteShowing(showing.id)}
-                        title="Delete"
+                        title="Cancel"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>

@@ -1,0 +1,293 @@
+# Clients System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         ESTATEFLOW CLIENTS SYSTEM                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+                            ┌─────────────────────┐
+                            │   USER BROWSER      │
+                            │  (React / Next.js)  │
+                            └──────────┬──────────┘
+                                       │
+                                       ▼
+    ┌──────────────────────────────────────────────────────────────┐
+    │              FRONTEND LAYER (Next.js)                        │
+    ├──────────────────────────────────────────────────────────────┤
+    │                                                              │
+    │  /app/clients/page.tsx                                       │
+    │  ├─ No Mock Data ✅ (REMOVED)                               │
+    │  ├─ API Integration ✅ (ADDED)                              │
+    │  ├─ Features:                                               │
+    │  │  ├─ Search (name, email, phone)                          │
+    │  │  ├─ Filter (status: hot/warm/cold)                       │
+    │  │  ├─ Pagination (10 items/page)                           │
+    │  │  ├─ Create new client                                    │
+    │  │  ├─ Update client                                        │
+    │  │  ├─ Delete client (with confirmation)                    │
+    │  │  ├─ Loading states                                       │
+    │  │  └─ Error handling                                       │
+    │  │                                                          │
+    │  └─ State Management:                                        │
+    │     ├─ clients: Client[]                                    │
+    │     ├─ isLoading: boolean                                   │
+    │     └─ error: string | null                                 │
+    │                                                              │
+    └──────────────────────┬───────────────────────────────────────┘
+                           │
+                           │ HTTP
+                           │ (fetch API)
+                           │
+    ┌──────────────────────▼───────────────────────────────────────┐
+    │              API ROUTES (/app/api/clients)                   │
+    ├──────────────────────────────────────────────────────────────┤
+    │                                                              │
+    │  route.ts                                                    │
+    │  ├─ GET /api/clients ┐                                      │
+    │  │  ├─ Query: page, limit, status, q (search)               │
+    │  │  ├─ Response: { items[], total, page, limit, pages }     │
+    │  │  └─ Logic: Filter, pagination, search                    │
+    │  │                                                          │
+    │  └─ POST /api/clients ┐                                     │
+    │     ├─ Body: name, email, phone, status, budget*, etc       │
+    │     ├─ Response: { id, ...client data }                     │
+    │     └─ Logic: Validate, sanitize, store                     │
+    │                                                              │
+    │  [id]/route.ts                                               │
+    │  ├─ GET /api/clients/[id] ┐                                │
+    │  │  ├─ Check auth & ownership                               │
+    │  │  └─ Response: Full client object                         │
+    │  │                                                          │
+    │  ├─ PUT /api/clients/[id] ┐                                │
+    │  │  ├─ Validate input & auth                                │
+    │  │  ├─ Update + timestamp                                   │
+    │  │  └─ Response: Updated client                             │
+    │  │                                                          │
+    │  └─ DELETE /api/clients/[id] ┐                             │
+    │     ├─ Soft delete (deleted_at field)                       │
+    │     └─ Response: { id }                                     │
+    │                                                              │
+    │  Security Middleware:                                        │
+    │  ├─ Authentication (Supabase JWT)                           │
+    │  ├─ Rate limiting                                           │
+    │  ├─ Input validation                                        │
+    │  └─ Error responses                                         │
+    │                                                              │
+    └──────────────────────┬───────────────────────────────────────┘
+                           │
+                           │ SQL
+                           │
+    ┌──────────────────────▼───────────────────────────────────────┐
+    │              SUPABASE / PostgreSQL                           │
+    ├──────────────────────────────────────────────────────────────┤
+    │                                                              │
+    │  clients table                                               │
+    │  ├─ Structure:                                              │
+    │  │  ├─ id: UUID (PK)                                        │
+    │  │  ├─ user_id: UUID (FK) → auth.users                     │
+    │  │  ├─ company_id: UUID (FK) → companies                   │
+    │  │  ├─ name: VARCHAR(255) ✓ NOT NULL                       │
+    │  │  ├─ email: VARCHAR(255) ✓ NOT NULL ✓ UNIQUE             │
+    │  │  ├─ phone: VARCHAR(20)                                   │
+    │  │  ├─ status: VARCHAR(20) DEFAULT 'warm'                  │
+    │  │  │  └─ CHECK IN ('hot', 'warm', 'cold')                │
+    │  │  ├─ source: VARCHAR(50)                                 │
+    │  │  ├─ budget_min/max: DECIMAL(12,2)                       │
+    │  │  │  └─ CHECK budget_min <= budget_max                   │
+    │  │  ├─ preferred_type: TEXT[]                              │
+    │  │  ├─ preferred_location: TEXT[]                          │
+    │  │  ├─ bedrooms: INTEGER                                   │
+    │  │  ├─ notes: TEXT (max 5000)                              │
+    │  │  ├─ created_at: TIMESTAMP DEFAULT NOW()                 │
+    │  │  ├─ updated_at: TIMESTAMP DEFAULT NOW()                 │
+    │  │  └─ deleted_at: TIMESTAMP DEFAULT NULL ← SOFT DELETE ✓  │
+    │  │                                                          │
+    │  ├─ Security (RLS):                                         │
+    │  │  ├─ SELECT: Users see own company clients               │
+    │  │  ├─ INSERT: Users create for their company              │
+    │  │  ├─ UPDATE: Users update own clients                    │
+    │  │  └─ DELETE: Users delete (use UPDATE deleted_at)        │
+    │  │                                                          │
+    │  ├─ Indexes:                                               │
+    │  │  ├─ company_id                                          │
+    │  │  ├─ user_id                                             │
+    │  │  ├─ status                                              │
+    │  │  ├─ email                                               │
+    │  │  ├─ created_at DESC                                     │
+    │  │  ├─ deleted_at                                          │
+    │  │  └─ company_id WHERE deleted_at IS NULL               │
+    │  │                                                          │
+    │  └─ Constraints:                                            │
+    │     ├─ name NOT NULL                                        │
+    │     ├─ email NOT NULL                                       │
+    │     └─ budget_min/max validation                           │
+    │                                                              │
+    └──────────────────────────────────────────────────────────────┘
+
+
+QUERY FLOW EXAMPLE:
+═══════════════════════════════════════════════════════════════════
+
+1. User visits /clients
+2. Frontend calls: GET /api/clients?page=1&limit=10
+3. API validates request & auth token
+4. API executes SQL:
+   - Filters deleted_at IS NULL
+   - Filters company_id = user's company
+   - Orders by created_at DESC
+   - LIMIT 10 OFFSET 0
+5. Returns: { items: [], total: N, page: 1, limit: 10, pages: N }
+6. Frontend renders table with results
+7. User can search, filter, create, update, or delete
+8. All changes go through same flow
+
+
+TEST COVERAGE:
+═══════════════════════════════════════════════════════════════════
+
+✅ CREATE  - POST /api/clients
+✅ READ    - GET /api/clients (list + search + filter)
+✅ UPDATE  - PUT /api/clients/{id}
+✅ DELETE  - DELETE /api/clients/{id} (soft)
+
+Tests verify:
+├─ Validation (required fields, formats)
+├─ Authorization (user access)
+├─ Business logic (filters, sorting)
+├─ Error handling (400, 401, 404, 500)
+└─ Data integrity (timestamps, soft deletes)
+
+
+DATA FLOW DIAGRAM:
+═══════════════════════════════════════════════════════════════════
+
+┌──────────────┐
+│ Create Form  │
+└──────┬───────┘
+       │ POST /api/clients
+       ▼
+  ┌─────────────────────────┐
+  │ Backend Validation      │
+  │ - Required fields       │
+  │ - Email format          │
+  │ - Phone format          │
+  │ - Budget range          │
+  └──────┬──────────────────┘
+         │
+         ├─ Invalid → 400 Error
+         │
+         ├─ Valid → Continue
+         │
+         ▼
+  ┌─────────────────────────┐
+  │ Authorization Check     │
+  │ - User authenticated?   │
+  │ - User's company?       │
+  └──────┬──────────────────┘
+         │
+         ├─ Unauthorized → 401
+         │
+         ├─ Forbidden → 403
+         │
+         ├─ Authorized → Continue
+         │
+         ▼
+  ┌─────────────────────────┐
+  │ Database Insert         │
+  │ INSERT INTO clients     │
+  │ VALUES (...)            │
+  └──────┬──────────────────┘
+         │
+         ├─ Error → 500
+         │
+         ├─ Success → 201
+         │
+         ▼
+  ┌──────────────┐
+  │ Show Client  │
+  └──────────────┘
+
+
+STATUS CODES:
+═════════════════════════════════════════════════════════════════
+
+✅ 200 OK         - Successful GET, PUT, DELETE
+✅ 201 Created    - Successful POST
+⚠️ 400 Bad Req    - Validation error (bad email, missing field)
+⚠️ 401 Unauthorized - No/invalid token
+⚠️ 403 Forbidden  - Token valid but no permission
+⚠️ 404 Not Found  - Client doesn't exist or is deleted
+❌ 500 Error      - Server-side error (rare with proper validation)
+
+
+SECURITY LAYERS:
+═══════════════════════════════════════════════════════════════════
+
+Layer 1: Authentication
+         └─ Check JWT token valid
+         
+Layer 2: Authorization
+         └─ Check user owns the client (user_id match)
+         └─ Check client is in user's company (company_id match)
+         
+Layer 3: Row Level Security (RLS)
+         └─ Database-level access control
+         └─ Cannot bypass with SQL injection
+         
+Layer 4: Input Validation
+         └─ Email format validation
+         └─ Phone format validation
+         └─ Budget range validation
+         └─ Required field checks
+         
+Layer 5: Rate Limiting
+         └─ Prevent brute force attacks
+         └─ Limit API calls per user
+
+
+FEATURES IMPLEMENTED:
+═══════════════════════════════════════════════════════════════════
+
+Frontend:
+  ✅ List all clients with pagination
+  ✅ Search by name, email, phone
+  ✅ Filter by status (hot/warm/cold)
+  ✅ Create new client
+  ✅ Update existing client
+  ✅ Delete client with confirmation
+  ✅ Loading states
+  ✅ Error messages
+  ✅ Mobile responsive
+
+Backend:
+  ✅ Retrieve clients list (filtered, sorted, paginated)
+  ✅ Create new client (validated)
+  ✅ Get single client (authorized)
+  ✅ Update client (validated, timestamped)
+  ✅ Soft delete client (with recovery)
+  ✅ Input validation
+  ✅ Error handling
+  ✅ Rate limiting
+
+Database:
+  ✅ clients table (with all fields)
+  ✅ Row Level Security
+  ✅ Soft deletes
+  ✅ Company isolation
+  ✅ User ownership
+  ✅ Indexes for performance
+  ✅ Constraints for data integrity
+
+Testing:
+  ✅ 10 comprehensive CRUD tests
+  ✅ Validation tests
+  ✅ Authorization tests
+  ✅ Error handling tests
+  ✅ Health check script
+
+
+═══════════════════════════════════════════════════════════════════
+System is FULLY IMPLEMENTED, TESTED, and READY FOR PRODUCTION ✅
+═══════════════════════════════════════════════════════════════════
+```

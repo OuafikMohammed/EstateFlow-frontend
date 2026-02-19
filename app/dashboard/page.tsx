@@ -45,7 +45,7 @@ export default function DashboardPage() {
     },
     {
       title: "Revenue",
-      value: `${(stats?.total_revenue || 0).toLocaleString()} DH`,
+      value: `${(stats?.total_revenue || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} DH`,
       subtitle: "Total Commissions",
       icon: Wallet,
       trend: { value: 15, isPositive: true },

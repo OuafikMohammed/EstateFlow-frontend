@@ -47,7 +47,7 @@ export function StatsCard({ title, value, subtitle, icon: Icon, trend, gradient 
         </div>
 
         <h3 className="text-3xl font-serif font-bold text-[var(--color-text-light)] mb-1">
-          {typeof value === "number" ? value.toLocaleString() : value}
+          {typeof value === "number" ? value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : value}
         </h3>
         <p className="text-sm text-[var(--color-muted-foreground)]">{subtitle}</p>
         <p className="text-xs text-[var(--color-muted-foreground)] mt-1">{title}</p>
