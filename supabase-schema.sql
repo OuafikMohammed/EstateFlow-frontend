@@ -244,30 +244,84 @@ CREATE INDEX idx_property_lead_assignments_property_id ON public.property_lead_a
 CREATE INDEX idx_property_lead_assignments_lead_id ON public.property_lead_assignments(lead_id);
 CREATE INDEX idx_property_lead_assignments_company_id ON public.property_lead_assignments(company_id);
 
+-- Step 8.5: Create CLIENTS table
+-- ============================================================================
+CREATE TABLE public.clients (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_by UUID NOT NULL REFERENCES public.profiles(id) ON DELETE SET NULL,
+  company_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
+  
+  -- Contact Info
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  phone VARCHAR(20),
+  
+  -- Status & Source
+  status VARCHAR(20) DEFAULT 'warm' CHECK (status IN ('hot', 'warm', 'cold')),
+  source VARCHAR(50),
+  
+  -- Budget
+  budget_min DECIMAL(12, 2),
+  budget_max DECIMAL(12, 2),
+  
+  -- Preferences
+  preferred_type TEXT[] DEFAULT '{}',
+  preferred_location TEXT[] DEFAULT '{}',
+  bedrooms INTEGER,
+  notes TEXT,
+  
+  -- Timestamps
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+  
+  CONSTRAINT clients_email_not_empty CHECK (email != ''),
+  CONSTRAINT clients_name_not_empty CHECK (name != ''),
+  CONSTRAINT clients_budget_valid CHECK (budget_min IS NULL OR budget_max IS NULL OR budget_min <= budget_max)
+);
+
+-- Create indexes on clients table
+CREATE INDEX idx_clients_company_id ON public.clients(company_id);
+CREATE INDEX idx_clients_user_id ON public.clients(user_id);
+CREATE INDEX idx_clients_created_by ON public.clients(created_by);
+CREATE INDEX idx_clients_status ON public.clients(status);
+CREATE INDEX idx_clients_email ON public.clients(email);
+CREATE INDEX idx_clients_created_at ON public.clients(created_at DESC);
+CREATE INDEX idx_clients_deleted_at ON public.clients(deleted_at);
+CREATE INDEX idx_clients_company_id_not_deleted ON public.clients(company_id) WHERE deleted_at IS NULL;
+
 -- Step 9: Create SHOWINGS table
 -- ============================================================================
 CREATE TABLE public.showings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   property_id UUID NOT NULL REFERENCES public.properties(id) ON DELETE CASCADE,
-  lead_id UUID NOT NULL REFERENCES public.leads(id) ON DELETE CASCADE,
+  client_id UUID NOT NULL REFERENCES public.clients(id) ON DELETE CASCADE,
   company_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
+  agent_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE SET NULL,
   scheduled_by UUID NOT NULL REFERENCES public.profiles(id) ON DELETE SET NULL,
   scheduled_at TIMESTAMP WITH TIME ZONE NOT NULL,
   duration_minutes INTEGER DEFAULT 60,
-  status VARCHAR(50) DEFAULT 'scheduled',
+  status VARCHAR(50) DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'cancelled', 'no-show')),
+  interest_level VARCHAR(1) CHECK (interest_level IN ('1', '2', '3', '4', '5') OR interest_level IS NULL),
+  feedback TEXT,
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
   
   CONSTRAINT showings_duration_positive CHECK (duration_minutes > 0)
 );
 
 -- Create indexes on showings
 CREATE INDEX idx_showings_property_id ON public.showings(property_id);
-CREATE INDEX idx_showings_lead_id ON public.showings(lead_id);
+CREATE INDEX idx_showings_client_id ON public.showings(client_id);
 CREATE INDEX idx_showings_company_id ON public.showings(company_id);
+CREATE INDEX idx_showings_agent_id ON public.showings(agent_id);
 CREATE INDEX idx_showings_scheduled_by ON public.showings(scheduled_by);
 CREATE INDEX idx_showings_scheduled_at ON public.showings(scheduled_at);
+CREATE INDEX idx_showings_status ON public.showings(status);
+CREATE INDEX idx_showings_deleted_at ON public.showings(deleted_at);
 
 -- Step 9.5: Create TEAM_INVITATIONS table
 -- ============================================================================
@@ -479,19 +533,13 @@ CREATE POLICY "COMPANY_ADMIN can update assignments"
     (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'company_admin'
   );
 
--- SHOWINGS: Users see showings for leads/properties they have access to
+-- SHOWINGS: Users can view and manage showings based on their role
 CREATE POLICY "Users can view company showings"
   ON public.showings FOR SELECT
   USING (
-    company_id = (SELECT company_id FROM public.profiles WHERE id = auth.uid()) AND
-    (
-      (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'company_admin' OR
-      scheduled_by = auth.uid() OR
-      lead_id IN (
-        SELECT id FROM public.leads WHERE
-          assigned_to = auth.uid() OR
-          created_by = auth.uid()
-      )
+    company_id IN (
+      SELECT company_id FROM public.profiles
+      WHERE id = auth.uid()
     )
   );
 
@@ -499,13 +547,27 @@ CREATE POLICY "Agents can create showings"
   ON public.showings FOR INSERT
   WITH CHECK (
     company_id = (SELECT company_id FROM public.profiles WHERE id = auth.uid()) AND
-    scheduled_by = auth.uid() AND
-    (SELECT role FROM public.profiles WHERE id = auth.uid()) IN ('agent', 'company_admin')
+    (
+      agent_id = auth.uid() OR
+      (SELECT role FROM public.profiles WHERE id = auth.uid()) IN ('company_admin', 'super_admin')
+    )
   );
 
-CREATE POLICY "Users can update their showings"
+CREATE POLICY "Users can update showings for their clients"
   ON public.showings FOR UPDATE
-  USING (scheduled_by = auth.uid());
+  USING (
+    agent_id = auth.uid() OR
+    scheduled_by = auth.uid() OR
+    (SELECT role FROM public.profiles WHERE id = auth.uid()) IN ('company_admin', 'super_admin')
+  );
+
+CREATE POLICY "Users can delete showings they created"
+  ON public.showings FOR DELETE
+  USING (
+    scheduled_by = auth.uid() OR
+    agent_id = auth.uid() OR
+    (SELECT role FROM public.profiles WHERE id = auth.uid()) IN ('company_admin', 'super_admin')
+  );
 
 -- TEAM_INVITATIONS: Company admins can invite, users can accept invitations for themselves
 CREATE POLICY "Company admin can view company invitations"

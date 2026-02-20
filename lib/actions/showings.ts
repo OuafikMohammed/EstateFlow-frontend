@@ -58,11 +58,18 @@ export async function createShowing(
     // Verify user is the agent or has admin role
     const { data: userProfile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, company_id")
       .eq("id", userId)
       .single()
 
-    const isAdmin = userProfile?.role === "admin"
+    if (!userProfile?.company_id) {
+      return {
+        success: false,
+        error: "User company information not found",
+      }
+    }
+
+    const isAdmin = userProfile?.role === "company_admin" || userProfile?.role === "super_admin"
     const isAssignedAgent = validatedInput.agent_id === userId
 
     if (!isAdmin && !isAssignedAgent) {
@@ -87,18 +94,36 @@ export async function createShowing(
       }
     }
 
-    // Check if client exists
-    const { data: client } = await supabase
-      .from("clients")
-      .select("id")
-      .eq("id", validatedInput.client_id)
-      .is("deleted_at", null)
-      .single()
+    // Check if client exists (if client_id is provided)
+    if (validatedInput.client_id) {
+      const { data: client } = await supabase
+        .from("clients")
+        .select("id")
+        .eq("id", validatedInput.client_id)
+        .is("deleted_at", null)
+        .single()
 
-    if (!client) {
-      return {
-        success: false,
-        error: "Client not found",
+      if (!client) {
+        return {
+          success: false,
+          error: "Client not found",
+        }
+      }
+    }
+
+    // Check if lead exists (if lead_id is provided)
+    if (validatedInput.lead_id) {
+      const { data: lead } = await supabase
+        .from("leads")
+        .select("id")
+        .eq("id", validatedInput.lead_id)
+        .single()
+
+      if (!lead) {
+        return {
+          success: false,
+          error: "Lead not found",
+        }
       }
     }
 
@@ -118,11 +143,12 @@ export async function createShowing(
       }
     }
 
-    // Create showing
+    // Create showing with company_id
     const { data, error } = await supabase
       .from("showings")
       .insert({
         ...validatedInput,
+        company_id: userProfile.company_id,
         scheduled_by: userId,
       })
       .select()
@@ -209,7 +235,7 @@ export async function updateShowing(
       .eq("id", userId)
       .single()
 
-    const isAdmin = userProfile?.role === "admin"
+    const isAdmin = userProfile?.role === "company_admin" || userProfile?.role === "super_admin"
     const isOwner = existingShowing.user_id === userId
 
     if (!isAdmin && !isOwner) {
@@ -287,7 +313,7 @@ export async function getShowings(
       .eq("id", userId)
       .single()
 
-    const isAdmin = userProfile?.role === "admin"
+    const isAdmin = userProfile?.role === "company_admin" || userProfile?.role === "super_admin"
 
     // Build query
     let queryBuilder = supabase
@@ -403,7 +429,7 @@ export async function getShowingsByDateRange(
       .eq("id", userId)
       .single()
 
-    const isAdmin = userProfile?.role === "admin"
+    const isAdmin = userProfile?.role === "company_admin" || userProfile?.role === "super_admin"
 
     // Build query
     let queryBuilder = supabase
@@ -512,7 +538,7 @@ export async function completeShowing(
       .eq("id", userId)
       .single()
 
-    const isAdmin = userProfile?.role === "admin"
+    const isAdmin = userProfile?.role === "company_admin" || userProfile?.role === "super_admin"
     const isAssignedAgent = existingShowing.agent_id === userId
 
     if (!isAdmin && !isAssignedAgent) {
@@ -620,7 +646,7 @@ export async function cancelShowing(
       .eq("id", userId)
       .single()
 
-    const isAdmin = userProfile?.role === "admin"
+    const isAdmin = userProfile?.role === "company_admin" || userProfile?.role === "super_admin"
     const isAssignedAgent = existingShowing.agent_id === userId
 
     if (!isAdmin && !isAssignedAgent) {

@@ -13,15 +13,20 @@ export const InterestLevelEnum = z.enum(["1", "2", "3", "4", "5"])
 export type InterestLevel = z.infer<typeof InterestLevelEnum>
 
 /**
- * Create Showing Schema
+ * Base Showing Schema (without refine)
  */
-export const CreateShowingSchema = z.object({
+const BaseShowingSchema = z.object({
   property_id: z
     .string()
     .uuid("Invalid property ID"),
   client_id: z
     .string()
-    .uuid("Invalid client ID"),
+    .uuid("Invalid client ID")
+    .optional(),
+  lead_id: z
+    .string()
+    .uuid("Invalid lead ID")
+    .optional(),
   agent_id: z
     .string()
     .uuid("Invalid agent ID")
@@ -40,18 +45,29 @@ export const CreateShowingSchema = z.object({
     .nullable(),
 })
 
+/**
+ * Create Showing Schema (with validation that client_id or lead_id is required)
+ */
+export const CreateShowingSchema = BaseShowingSchema.refine(
+  (data) => data.client_id || data.lead_id,
+  {
+    message: "Either client_id or lead_id must be provided",
+    path: ["client_id"],
+  }
+)
+
 export type CreateShowing = z.infer<typeof CreateShowingSchema>
 
 /**
- * Update Showing Schema
+ * Update Showing Schema (all fields optional)
  */
-export const UpdateShowingSchema = CreateShowingSchema.partial()
+export const UpdateShowingSchema = BaseShowingSchema.partial()
 export type UpdateShowing = z.infer<typeof UpdateShowingSchema>
 
 /**
  * Showing Schema (Full showing object with joins)
  */
-export const ShowingSchema = CreateShowingSchema.extend({
+export const ShowingSchema = BaseShowingSchema.extend({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
   created_at: z.string().datetime(),
@@ -74,7 +90,13 @@ export const ShowingSchema = CreateShowingSchema.extend({
     email: z.string().email(),
     name: z.string(),
   }).optional(),
-})
+}).refine(
+  (data) => data.client_id || data.lead_id,
+  {
+    message: "Either client_id or lead_id must be provided",
+    path: ["client_id"],
+  }
+)
 
 export type Showing = z.infer<typeof ShowingSchema>
 

@@ -83,19 +83,6 @@ export async function getProperties(
       return createErrorResult('Authentication required', { authError: authError?.message })
     }
 
-    // Get user's profile to access company_id (RLS requires this)
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('company_id')
-      .eq('id', user.id)
-      .single()
-
-    if (profileError || !profile?.company_id) {
-      return createErrorResult('Unable to determine company access', {
-        profileError: profileError?.message,
-      })
-    }
-
     // Build query - RLS will filter by company_id automatically
     let queryBuilder = supabase
       .from('properties')
@@ -121,9 +108,8 @@ export async function getProperties(
 
     // Search in address and description
     if (validatedQuery.search) {
-      const searchTerm = `%${validatedQuery.search}%`
       queryBuilder = queryBuilder.or(
-        `address.ilike.${searchTerm},description.ilike.${searchTerm}`
+        `address.ilike.%${validatedQuery.search}%,description.ilike.%${validatedQuery.search}%`
       )
     }
 
