@@ -361,4 +361,4 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
       </div>
     </DashboardLayout>
   )
-}>
+}

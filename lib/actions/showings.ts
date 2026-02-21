@@ -246,10 +246,14 @@ export async function updateShowing(
     }
 
     // Update showing
+    const updateData = Object.fromEntries(
+      Object.entries(validatedInput).filter(([, value]) => value !== undefined)
+    )
+
     const { data, error } = await supabase
       .from("showings")
       .update({
-        ...validatedInput,
+        ...updateData,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
@@ -318,7 +322,7 @@ export async function getShowings(
     // Build query
     let queryBuilder = supabase
       .from("showings")
-      .select("*", { count: "exact" })
+      .select("*, properties(id, title, address, city), clients(id, name, phone, email)", { count: "exact" })
       .is("deleted_at", null)
 
     // Filter by agent if not admin
@@ -434,7 +438,7 @@ export async function getShowingsByDateRange(
     // Build query
     let queryBuilder = supabase
       .from("showings")
-      .select("*", { count: "exact" })
+      .select("*, properties(id, title, address, city), clients(id, name, phone, email)", { count: "exact" })
       .gte("scheduled_at", validatedQuery.from_date)
       .lte("scheduled_at", validatedQuery.to_date)
       .is("deleted_at", null)
@@ -549,14 +553,22 @@ export async function completeShowing(
     }
 
     // Update showing with completed status
+    const updateData: Record<string, any> = {
+      status: "completed",
+      updated_at: new Date().toISOString(),
+    }
+
+    // Only set feedback/interest_level if they're provided (avoid overwriting with null)
+    if (validatedInput.feedback !== undefined) {
+      updateData.feedback = validatedInput.feedback
+    }
+    if (validatedInput.interest_level !== undefined) {
+      updateData.interest_level = validatedInput.interest_level
+    }
+
     const { data, error } = await supabase
       .from("showings")
-      .update({
-        status: "completed",
-        feedback: validatedInput.feedback || null,
-        interest_level: validatedInput.interest_level || null,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq("id", validatedInput.id)
       .select()
       .single()
