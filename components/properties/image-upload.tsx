@@ -122,7 +122,7 @@ export function ImageUpload({
       </div>
 
       {/* Error Message */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -137,7 +137,7 @@ export function ImageUpload({
       </AnimatePresence>
 
       {/* Upload Progress */}
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {uploadProgress.length > 0 && (
           <div className="space-y-2">
             {uploadProgress.map((progress) => (
@@ -175,38 +175,40 @@ export function ImageUpload({
       </AnimatePresence>
 
       {/* Image Gallery */}
-      {images.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {images.map((image, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="relative aspect-video rounded-lg overflow-hidden group"
-            >
-              <img
-                src={image}
-                alt={`Property ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-              <Button
-                variant="destructive"
-                size="icon"
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => removeImage(index)}
+      <AnimatePresence mode="popLayout">
+        {images.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {images.map((image, index) => (
+              <motion.div
+                key={`${image}-${index}`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="relative aspect-video rounded-lg overflow-hidden group"
               >
-                <X className="w-4 h-4" />
-              </Button>
+                <img
+                  src={image}
+                  alt={`Property ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => removeImage(index)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
 
-              {/* Counter Badge */}
-              <div className="absolute bottom-2 right-2 bg-black/60 px-2 py-1 rounded text-xs text-white">
-                {index + 1}/{images.length}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      )}
+                {/* Counter Badge */}
+                <div className="absolute bottom-2 right-2 bg-black/60 px-2 py-1 rounded text-xs text-white">
+                  {index + 1}/{images.length}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Image Count */}
       {images.length > 0 && (

@@ -134,6 +134,7 @@ CREATE TABLE public.properties (
   hoa_fees DECIMAL(10, 2),
   images TEXT[] DEFAULT '{}',
   documents TEXT[] DEFAULT '{}',
+  amenities TEXT[] DEFAULT '{}',
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

@@ -80,13 +80,20 @@ export function useProperty(id: string, options: UsePropertiesOptions = {}) {
   const { enabled = true, staleTime = 10 * 60 * 1000, cacheTime = 15 * 60 * 1000 } =
     options
 
-  return useQuery({
+  const { data, isLoading, error, ...rest } = useQuery({
     queryKey: queryKeys.properties.detail(id),
     queryFn: () => propertiesApi.getById(id),
     enabled: enabled && !!id,
     staleTime,
     gcTime: cacheTime,
   })
+
+  return {
+    property: data,
+    loading: isLoading,
+    error,
+    ...rest,
+  }
 }
 
 /**
@@ -355,7 +362,7 @@ export function useRecentLeads(limit: number = 5) {
  * Fetch current authenticated user's profile
  */
 export function useCurrentUserProfile() {
-  return useQuery({
+  const { data, isLoading, error, ...rest } = useQuery({
     queryKey: ['user', 'profile'],
     queryFn: async () => {
       const response = await fetch('/api/user/profile')
@@ -367,4 +374,11 @@ export function useCurrentUserProfile() {
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 60 * 60 * 1000, // 1 hour
   })
+
+  return {
+    userProfile: data,
+    loading: isLoading,
+    error,
+    ...rest,
+  }
 }

@@ -21,17 +21,21 @@ import {
 } from '@/lib/validators/property'
 import { Property } from '@/lib/types/database'
 import { ApiResult, SuccessResponse, ErrorResponse } from '@/lib/types/api-responses'
+import { ZodError } from 'zod'
 
 /**
  * Error handling helper
  */
 function createErrorResult(message: string, details?: Record<string, any>): ErrorResponse {
+  // Ensure details are JSON-serializable
+  const sanitizedDetails = details ? JSON.parse(JSON.stringify(details)) : undefined
+  
   return {
     success: false,
     error: {
       code: 'OPERATION_FAILED',
       message,
-      details,
+      details: sanitizedDetails,
     },
   }
 }
@@ -205,6 +209,8 @@ export async function getPropertyById(propertyId: string): Promise<ApiResult<Pro
  */
 export async function createProperty(input: CreatePropertyInput): Promise<ApiResult<Property>> {
   try {
+    console.log('createProperty input:', JSON.stringify(input, null, 2))
+    
     // Validate input
     const validatedInput = createPropertySchema.parse(input)
 
@@ -242,10 +248,17 @@ export async function createProperty(input: CreatePropertyInput): Promise<ApiRes
       description: validatedInput.description,
       status: validatedInput.status,
       address: validatedInput.address,
+      city: validatedInput.city || '',
+      country: validatedInput.country,
+      zip_code: validatedInput.zipCode,
       latitude: validatedInput.latitude,
       longitude: validatedInput.longitude,
       title: `${validatedInput.type} - ${validatedInput.address}`, // Generated title
+      images: validatedInput.images || [], // Include images array
+      amenities: validatedInput.amenities || [], // Include amenities array
     }
+
+    console.log('Creating property with validated data:', propertyData)
 
     // Insert property
     const { data: property, error: insertError } = await supabase
@@ -255,8 +268,17 @@ export async function createProperty(input: CreatePropertyInput): Promise<ApiRes
       .single()
 
     if (insertError) {
-      return createErrorResult('Failed to create property', {
-        error: insertError.message,
+      console.error('Supabase insert error:', {
+        message: insertError.message,
+        code: insertError.code,
+        details: insertError.details,
+        hint: (insertError as any).hint,
+        context: (insertError as any).context,
+      })
+      return createErrorResult(`Supabase error: ${insertError.message}`, {
+        code: insertError.code,
+        details: insertError.details,
+        hint: (insertError as any).hint,
       })
     }
 
@@ -266,12 +288,24 @@ export async function createProperty(input: CreatePropertyInput): Promise<ApiRes
 
     return createSuccessResult(property, 'Property created successfully')
   } catch (error) {
-    if (error instanceof Error && 'issues' in error) {
+    console.error('createProperty error caught:', error)
+    
+    if (error instanceof ZodError) {
       // Zod validation error
-      return createErrorResult('Validation failed', { details: error })
+      const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
+      console.error('Zod validation errors:', messages)
+      return createErrorResult('Validation failed: ' + messages, { 
+        issues: error.errors.map(e => ({
+          path: e.path.join('.'),
+          message: e.message,
+          code: e.code,
+        }))
+      })
     }
+    
     const message = error instanceof Error ? error.message : 'Unknown error'
-    return createErrorResult('Failed to create property', { error: message })
+    console.error('Final error message:', message)
+    return createErrorResult(message, { errorType: typeof error })
   }
 }
 

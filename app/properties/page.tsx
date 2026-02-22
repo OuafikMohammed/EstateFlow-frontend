@@ -20,7 +20,7 @@ export default function PropertiesPage() {
   const [userId, setUserId] = useState<string | null>(null)
 
   // Get current user
-  const { data: userProfile } = useCurrentUserProfile()
+  const { userProfile } = useCurrentUserProfile()
 
   // Set user ID when available
   useEffect(() => {

@@ -76,6 +76,7 @@ export interface Property {
   hoa_fees?: number
   images?: string[]
   documents?: string[]
+  amenities?: string[]
   notes?: string
   created_at: string
   updated_at: string

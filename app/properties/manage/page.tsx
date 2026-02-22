@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,60 +30,62 @@ interface DeleteConfirmProps {
 }
 
 function DeleteConfirmationDialog({ isOpen, propertyTitle, isDeleting, onConfirm, onCancel }: DeleteConfirmProps) {
-  if (!isOpen) return null
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-[var(--color-bg-card)] rounded-xl max-w-md w-full border border-[var(--color-border)]"
-      >
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <AlertCircle className="w-6 h-6 text-red-500" />
-            <h2 className="text-lg font-serif font-bold text-[var(--color-text-light)]">Delete Property</h2>
-          </div>
+    <AnimatePresence mode="wait">
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-[var(--color-bg-card)] rounded-xl max-w-md w-full border border-[var(--color-border)]"
+          >
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <AlertCircle className="w-6 h-6 text-red-500" />
+                <h2 className="text-lg font-serif font-bold text-[var(--color-text-light)]">Delete Property</h2>
+              </div>
 
-          <p className="text-[var(--color-muted-foreground)] mb-4">
-            Are you sure you want to delete <span className="font-semibold text-[var(--color-text-light)]">"{propertyTitle}"</span>?
-          </p>
+              <p className="text-[var(--color-muted-foreground)] mb-4">
+                Are you sure you want to delete <span className="font-semibold text-[var(--color-text-light)]">"{propertyTitle}"</span>?
+              </p>
 
-          <p className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-6">
-            This action cannot be undone. The property and all associated data will be permanently deleted.
-          </p>
+              <p className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-6">
+                This action cannot be undone. The property and all associated data will be permanently deleted.
+              </p>
 
-          <div className="flex gap-3 justify-end">
-            <Button
-              variant="outline"
-              onClick={onCancel}
-              disabled={isDeleting}
-              className="border-[var(--color-border)] text-[var(--color-text-light)]"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={onConfirm}
-              disabled={isDeleting}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                <>
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Property
-                </>
-              )}
-            </Button>
-          </div>
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={onCancel}
+                  disabled={isDeleting}
+                  className="border-[var(--color-border)] text-[var(--color-text-light)]"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={onConfirm}
+                  disabled={isDeleting}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete Property
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
-    </div>
+      )}
+    </AnimatePresence>
   )
 }
 
@@ -107,7 +109,7 @@ export default function ManagePropertiesPage() {
 
   const router = useRouter()
   const { toast } = useToast()
-  const { data: userProfile } = useCurrentUserProfile()
+  const { userProfile } = useCurrentUserProfile()
   const deleteProperty = useDeleteProperty()
 
   // Set user ID when available

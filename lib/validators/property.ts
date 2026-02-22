@@ -68,6 +68,18 @@ export const createPropertySchema = z.object({
     .string()
     .min(5, 'Address must be at least 5 characters')
     .describe('Property street address'),
+  city: z
+    .string()
+    .min(1, 'City is required')
+    .describe('City'),
+  country: z
+    .string()
+    .optional()
+    .describe('Country'),
+  zipCode: z
+    .string()
+    .optional()
+    .describe('ZIP code'),
   latitude: z
     .number()
     .min(-90)
@@ -80,6 +92,16 @@ export const createPropertySchema = z.object({
     .max(180)
     .optional()
     .describe('Longitude coordinate'),
+  images: z
+    .array(z.string().url())
+    .min(3, 'At least 3 images are required')
+    .max(10, 'Maximum 10 images allowed')
+    .optional()
+    .describe('Property images (URLs)'),
+  amenities: z
+    .array(z.string())
+    .optional()
+    .describe('Property amenities'),
 })
 
 /**
@@ -125,6 +147,14 @@ export const updatePropertySchema = z.object({
     .number()
     .min(-180)
     .max(180)
+    .optional(),
+  images: z
+    .array(z.string().url())
+    .min(3, 'At least 3 images are required')
+    .max(10, 'Maximum 10 images allowed')
+    .optional(),
+  amenities: z
+    .array(z.string())
     .optional(),
 })
 

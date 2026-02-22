@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { ChevronLeft, Loader2, AlertCircle, Upload } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
+import { ImageUpload } from "@/components/properties/image-upload"
 
 interface Property {
   id: string
@@ -24,6 +25,7 @@ interface Property {
   bathrooms: number
   square_feet: number
   images: string[]
+  amenities?: string[]
   created_by: string
 }
 
@@ -51,6 +53,7 @@ export default function EditPropertyPage() {
     bedrooms: "",
     bathrooms: "",
     square_feet: "",
+    amenities: [] as string[],
   })
 
   const [imagePreview, setImagePreview] = useState<string[]>([])
@@ -96,6 +99,7 @@ export default function EditPropertyPage() {
           bedrooms: propertyData.bedrooms ? propertyData.bedrooms.toString() : "",
           bathrooms: propertyData.bathrooms ? propertyData.bathrooms.toString() : "",
           square_feet: propertyData.square_feet ? propertyData.square_feet.toString() : "",
+          amenities: Array.isArray(propertyData.amenities) ? propertyData.amenities : [],
         })
       } catch (err) {
         console.error("Error fetching property:", err)
@@ -119,6 +123,23 @@ export default function EditPropertyPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  const toggleAmenity = (amenity: string) => {
+    setFormData((prev) => {
+      const currentAmenities = Array.isArray(prev.amenities) ? prev.amenities : []
+      if (currentAmenities.includes(amenity)) {
+        return {
+          ...prev,
+          amenities: currentAmenities.filter((a) => a !== amenity),
+        }
+      } else {
+        return {
+          ...prev,
+          amenities: [...currentAmenities, amenity],
+        }
+      }
+    })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -126,6 +147,24 @@ export default function EditPropertyPage() {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (imagePreview.length < 3) {
+      toast({
+        title: "Validation Error",
+        description: `Please add at least 3 images. Currently you have ${imagePreview.length} image${imagePreview.length !== 1 ? 's' : ''}.`,
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (imagePreview.length > 10) {
+      toast({
+        title: "Validation Error",
+        description: "You can only upload a maximum of 10 images.",
         variant: "destructive",
       })
       return
@@ -145,6 +184,7 @@ export default function EditPropertyPage() {
         bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : null,
         square_feet: formData.square_feet ? parseInt(formData.square_feet) : null,
         images: imagePreview,
+        amenities: formData.amenities,
       }
 
       const response = await fetch(`/api/properties/${propertyId}`, {
@@ -436,23 +476,71 @@ export default function EditPropertyPage() {
               </div>
             </div>
 
+            {/* Amenities */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-serif font-bold text-[var(--color-text-light)]">Amenities</h2>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {[
+                  "WiFi",
+                  "Pool",
+                  "Gym",
+                  "Parking",
+                  "Garden",
+                  "Balcony",
+                  "AC",
+                  "Heating",
+                  "Furnished",
+                  "Pet Friendly",
+                  "Security",
+                  "Elevator",
+                ].map((amenity) => (
+                  <label key={amenity} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.amenities.includes(amenity)}
+                      onChange={() => toggleAmenity(amenity)}
+                      className="w-4 h-4 rounded border-[var(--color-border)] bg-[var(--color-bg-card)] text-[var(--color-primary-gold)] focus:ring-[var(--color-primary-gold)] cursor-pointer"
+                    />
+                    <span className="text-sm text-[var(--color-text-light)]">{amenity}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             {/* Images Preview */}
-            {imagePreview.length > 0 && (
-              <div className="space-y-4">
-                <h2 className="text-lg font-serif font-bold text-[var(--color-text-light)]">Current Images</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {imagePreview.map((image, index) => (
-                    <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
-                      <img
-                        src={image}
-                        alt={`Property ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-serif font-bold text-[var(--color-text-light)]">Property Images</h2>
+                <div className="flex items-center gap-2">
+                  <Badge 
+                    className={`${
+                      imagePreview.length < 3 
+                        ? 'bg-red-500/20 text-red-500' 
+                        : imagePreview.length > 10 
+                        ? 'bg-orange-500/20 text-orange-500'
+                        : 'bg-green-500/20 text-green-500'
+                    }`}
+                  >
+                    {imagePreview.length} / 10 images
+                  </Badge>
+                  {imagePreview.length < 3 && (
+                    <span className="text-xs text-red-500">
+                      ({3 - imagePreview.length} more needed)
+                    </span>
+                  )}
+                  {imagePreview.length === 10 && (
+                    <span className="text-xs text-orange-500">Maximum reached</span>
+                  )}
                 </div>
               </div>
-            )}
+
+              <ImageUpload
+                onImagesUploaded={(urls) => setImagePreview(urls)}
+                maxFiles={10}
+                existingImages={imagePreview}
+              />
+            </div>
 
             {/* Action Buttons */}
             <div className="flex gap-3 justify-end pt-6 border-t border-[var(--color-border)]">

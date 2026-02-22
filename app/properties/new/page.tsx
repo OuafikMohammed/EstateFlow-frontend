@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, AlertCircle, CheckCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
@@ -121,6 +122,17 @@ export default function NewPropertyPage() {
         return
       }
 
+      // Validate image count
+      if (formData.images.length < 3) {
+        setSubmitError(`Please add at least 3 images. Currently you have ${formData.images.length} image${formData.images.length !== 1 ? 's' : ''}.`)
+        return
+      }
+
+      if (formData.images.length > 10) {
+        setSubmitError("You can only upload a maximum of 10 images.")
+        return
+      }
+
       // Create property object matching the server action schema
       const propertyData: any = {
         type: formData.type.toLowerCase(),
@@ -130,6 +142,9 @@ export default function NewPropertyPage() {
         bathrooms: formData.bathrooms || 0,
         status: formData.status.toLowerCase(),
         address: formData.address,
+        city: formData.city,
+        images: formData.images && formData.images.length > 0 ? formData.images : undefined,
+        amenities: formData.amenities && formData.amenities.length > 0 ? formData.amenities : undefined,
       }
 
       // Only include optional fields if provided
@@ -149,16 +164,34 @@ export default function NewPropertyPage() {
         propertyData.longitude = parseFloat(formData.longitude)
       }
 
-      // Call the server action
-      const response = await createProperty(propertyData)
+      if (formData.country) {
+        propertyData.country = formData.country
+      }
 
-      if (response.success) {
+      if (formData.zipCode) {
+        propertyData.zipCode = formData.zipCode
+      }
+
+      console.log('Sending property data to server:', JSON.stringify(propertyData, null, 2))
+
+      // Call the server action
+      console.log('About to call createProperty')
+      const response = await createProperty(propertyData)
+      
+      console.log('Response received:', response)
+      console.log('Response type:', typeof response)
+
+      if ('success' in response && response.success) {
         setSubmitSuccess(true)
         setTimeout(() => {
           router.push("/properties")
         }, 2000)
       } else {
-        setSubmitError(response.error?.message || "Failed to create property")
+        const errorResponse = response as any
+        const errorMessage = errorResponse?.error?.message || "Failed to create property"
+        console.error('Property creation failed with message:', errorMessage)
+        console.error('Full error response:', errorResponse)
+        setSubmitError(errorMessage)
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Error creating property"
@@ -218,7 +251,7 @@ export default function NewPropertyPage() {
               </p>
             </motion.div>
           ) : (
-            <Tabs defaultValue="basic" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3 bg-[var(--color-bg-card)] border border-[var(--color-border)]">
                 <TabsTrigger
                   value="basic"
@@ -505,7 +538,30 @@ export default function NewPropertyPage() {
               {/* Tab 3: Media */}
               <TabsContent value="media" className="space-y-6 mt-6">
                 <div>
-                  <Label className="text-[var(--color-text-light)] mb-3 block">Property Images</Label>
+                  <div className="flex items-center justify-between mb-4">
+                    <Label className="text-[var(--color-text-light)] block">Property Images</Label>
+                    <div className="flex items-center gap-2">
+                      <Badge 
+                        className={`${
+                          formData.images.length < 3 
+                            ? 'bg-red-500/20 text-red-500' 
+                            : formData.images.length > 10 
+                            ? 'bg-orange-500/20 text-orange-500'
+                            : 'bg-green-500/20 text-green-500'
+                        }`}
+                      >
+                        {formData.images.length} / 10 images
+                      </Badge>
+                      {formData.images.length < 3 && (
+                        <span className="text-xs text-red-500">
+                          ({3 - formData.images.length} more needed)
+                        </span>
+                      )}
+                      {formData.images.length === 10 && (
+                        <span className="text-xs text-orange-500">Maximum reached</span>
+                      )}
+                    </div>
+                  </div>
                   <ImageUpload
                     onImagesUploaded={(urls) => updateFormData("images", urls)}
                     maxFiles={10}

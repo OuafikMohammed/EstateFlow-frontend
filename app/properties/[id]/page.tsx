@@ -202,6 +202,32 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
           onCancel={() => setShowDeleteDialog(false)}
         />
 
+        {/* Images Gallery */}
+        {images && images.length > 0 && (
+          <Card className="glass p-6 border-[var(--color-border)]">
+            <h2 className="text-2xl font-serif font-bold text-[var(--color-text-light)] mb-4">
+              Property Images
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {images.map((image, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="relative aspect-video rounded-lg overflow-hidden"
+                >
+                  <img
+                    src={image}
+                    alt={`Property image ${index + 1}`}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </Card>
+        )}
+
         {/* Property Header Card */}
         <Card className="glass p-8 border-[var(--color-border)]">
           <div className="space-y-4">
@@ -293,6 +319,32 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
             </Card>
           )}
         </div>
+
+        {/* Amenities */}
+        {property.amenities && property.amenities.length > 0 && (
+          <Card className="glass p-6 border-[var(--color-border)]">
+            <h2 className="text-2xl font-serif font-bold text-[var(--color-text-light)] mb-4">
+              Amenities
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+              {property.amenities.map((amenity, index) => (
+                <motion.div
+                  key={`${amenity}-${index}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Badge 
+                    variant="secondary" 
+                    className="bg-[var(--color-primary-gold)]/20 text-[var(--color-primary-gold)] border-[var(--color-primary-gold)]/30 w-full text-center justify-center py-2 text-sm"
+                  >
+                    {amenity}
+                  </Badge>
+                </motion.div>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* Description and Details */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

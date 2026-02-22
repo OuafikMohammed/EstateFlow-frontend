@@ -169,6 +169,7 @@ export async function POST(request: NextRequest) {
       bathrooms: body.bathrooms ? parseFloat(body.bathrooms) : null,
       square_feet: body.square_feet || body.area ? parseInt(body.area) : null,
       images: Array.isArray(body.images) ? body.images : [],
+      amenities: Array.isArray(body.amenities) ? body.amenities : [],
     }
 
     console.log('Sanitized property data:', propertyData)
