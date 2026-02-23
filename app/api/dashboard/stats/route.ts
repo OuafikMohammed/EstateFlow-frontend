@@ -46,14 +46,21 @@ export async function GET(request: NextRequest) {
       .select('id', { count: 'exact', head: true })
       .eq('company_id', companyId)
 
-    // Fetch new leads
-    const { count: newLeads } = await supabase
+    // Fetch not contacted leads (status = 'new')
+    const { count: notContactedLeads } = await supabase
       .from('leads')
       .select('id', { count: 'exact', head: true })
       .eq('company_id', companyId)
       .eq('status', 'new')
 
-    // Fetch closed won leads
+    // Fetch contacted leads (status != 'new' and not closed)
+    const { count: contactedLeads } = await supabase
+      .from('leads')
+      .select('id', { count: 'exact', head: true })
+      .eq('company_id', companyId)
+      .in('status', ['contacted', 'qualified', 'proposal_sent', 'negotiating'])
+
+    // Fetch closed won leads (deal made)
     const { count: closedWonLeads } = await supabase
       .from('leads')
       .select('id', { count: 'exact', head: true })
@@ -80,7 +87,8 @@ export async function GET(request: NextRequest) {
     const stats = {
       total_properties: totalProperties || 0,
       total_leads: totalLeads || 0,
-      new_leads: newLeads || 0,
+      not_contacted_leads: notContactedLeads || 0,
+      contacted_leads: contactedLeads || 0,
       closed_won_leads: closedWonLeads || 0,
       properties_sold: propertiesSold || 0,
       total_revenue: totalRevenue,

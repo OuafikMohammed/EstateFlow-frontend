@@ -198,11 +198,12 @@ export interface PaginatedResponse<T> {
 export interface DashboardStats {
   total_properties: number
   total_leads: number
-  new_leads: number
+  not_contacted_leads: number
+  contacted_leads: number
   closed_won_leads: number
   properties_sold: number
   total_revenue: number
-  avg_property_price: number
+  avg_property_price?: number
 }
 
 /**

@@ -10,13 +10,16 @@ import { useDashboardStats } from "@/hooks/use-data"
 
 interface DashboardStats {
   total_properties: number
-  new_leads: number
+  not_contacted_leads: number
   properties_sold: number
   total_revenue: number
 }
 
 export default function DashboardPage() {
-  const { data: stats, isLoading } = useDashboardStats() as { data: DashboardStats; isLoading: boolean }
+  const { data: statsResponse, isLoading } = useDashboardStats() as { data: any; isLoading: boolean }
+  
+  // Extract data from the API response wrapper
+  const stats = statsResponse?.data || statsResponse
 
   const displayStats = [
     {
@@ -29,7 +32,7 @@ export default function DashboardPage() {
     },
     {
       title: "New Leads",
-      value: stats?.new_leads || 0,
+      value: stats?.not_contacted_leads || 0,
       subtitle: "This Week",
       icon: Users,
       trend: { value: 8, isPositive: true },

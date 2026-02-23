@@ -301,8 +301,10 @@ export function useDashboardStats() {
   return useQuery({
     queryKey: queryKeys.dashboard.stats(),
     queryFn: () => dashboardApi.getStats(),
-    staleTime: 15 * 60 * 1000, // 15 minutes
-    gcTime: 30 * 60 * 1000, // 30 minutes
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 5 * 60 * 1000, // 5 minutes garbage collection
+    refetchOnMount: 'stale', // Refetch when component mounts if data appears stale
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   })
 }
 

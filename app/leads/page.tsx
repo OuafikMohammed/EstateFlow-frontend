@@ -7,7 +7,10 @@ import { Users, UserCheck, UserX, CheckCircle2 } from "lucide-react"
 import { useDashboardStats } from "@/hooks/use-data"
 
 export default function LeadsPage() {
-  const { data: stats } = useDashboardStats()
+  const { data: statsResponse } = useDashboardStats()
+
+  // Extract data from the API response wrapper
+  const stats = statsResponse?.data || statsResponse
 
   const displayStats = [
     {
@@ -18,23 +21,23 @@ export default function LeadsPage() {
       gradient: "from-[var(--color-bg-dark)] to-[var(--color-primary-gold)]",
     },
     {
-      title: "New",
-      value: stats?.new_leads || 0,
+      title: "Not Contacted",
+      value: stats?.not_contacted_leads || 0,
       subtitle: "Uncontacted",
-      icon: UserCheck,
+      icon: UserX,
       gradient: "from-[var(--color-bg-dark)] to-[var(--color-danger)]",
     },
     {
-      title: "In Progress",
-      value: Math.max(0, (stats?.total_leads || 0) - (stats?.new_leads || 0) - (stats?.closed_won_leads || 0)),
-      subtitle: "Being Contacted",
-      icon: UserX,
+      title: "Contacted",
+      value: stats?.contacted_leads || 0,
+      subtitle: "Being Engaged",
+      icon: UserCheck,
       gradient: "from-[var(--color-bg-dark)] to-yellow-500",
     },
     {
-      title: "Closed Won",
+      title: "Deal Made",
       value: stats?.closed_won_leads || 0,
-      subtitle: "This Month",
+      subtitle: "Closed Won",
       icon: CheckCircle2,
       gradient: "from-[var(--color-bg-dark)] to-[var(--color-success)]",
     },
