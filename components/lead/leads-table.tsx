@@ -1,26 +1,39 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
+import Link from "next/link"
 import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Eye, Phone, Mail, MessageCircle, Trash2, Search, Loader2 } from "lucide-react"
+import { Eye, Phone, Mail, MessageCircle, Trash2, Search, Loader2, Download } from "lucide-react"
 import { useLeads, useDeleteLead } from "@/hooks/use-data"
 import { LeadStatus } from "@/lib/types/database"
 
 export function LeadsTable() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [page, setPage] = useState(1)
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery)
+      // Reset to page 1 when search changes
+      setPage(1)
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [searchQuery])
 
   // Fetch leads from API
   const { data: leadsData, isLoading, error } = useLeads({
     page,
     limit: 10,
     status: statusFilter !== "all" ? (statusFilter as LeadStatus) : undefined,
-    searchQuery: searchQuery || undefined,
+    searchQuery: debouncedSearch || undefined,
   })
 
   const deleteLead = useDeleteLead()
@@ -28,6 +41,37 @@ export function LeadsTable() {
   const leads = leadsData?.items || []
   const total = leadsData?.total || 0
   const pages = leadsData?.pages || 0
+
+  const exportToExcel = () => {
+    if (!leads.length) return
+
+    // Prepare CSV content
+    const headers = ["First Name", "Last Name", "Email", "Phone", "Status", "Budget Min", "Budget Max", "Created Date"]
+    const rows = leads.map(lead => [
+      lead.first_name,
+      lead.last_name,
+      lead.email || "",
+      lead.phone || "",
+      lead.status.replace(/_/g, " ").toUpperCase(),
+      lead.budget_min || "",
+      lead.budget_max || "",
+      new Date(lead.created_at).toLocaleDateString()
+    ])
+
+    // Create CSV string
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+    ].join("\n")
+
+    // Download
+    const blob = new Blob([csvContent], { type: "text/csv" })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `leads_${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+  }
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -55,13 +99,24 @@ export function LeadsTable() {
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--color-muted-foreground)]" />
           <Input
-            placeholder="Search leads..."
+            placeholder="Search leads by name, email, phone..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]"
           />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-text-light)]"
+            >
+              ✕
+            </button>
+          )}
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={statusFilter} onValueChange={(value) => {
+          setStatusFilter(value)
+          setPage(1)
+        }}>
           <SelectTrigger className="w-full md:w-48 bg-[var(--color-bg-card)] border-[var(--color-border)] text-[var(--color-text-light)]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
@@ -74,6 +129,14 @@ export function LeadsTable() {
             <SelectItem value="closed_lost">Closed Lost</SelectItem>
           </SelectContent>
         </Select>
+        <Button
+          onClick={exportToExcel}
+          disabled={!leads.length}
+          className="bg-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/90 text-black font-semibold gap-2"
+        >
+          <Download className="w-4 h-4" />
+          Export CSV
+        </Button>
       </div>
 
       {/* Loading State */}
@@ -142,24 +205,69 @@ export function LeadsTable() {
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" className="text-[var(--color-text-light)] h-8 w-8">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-[var(--color-text-light)] h-8 w-8">
-                          <Phone className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-[var(--color-text-light)] h-8 w-8">
-                          <Mail className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-[var(--color-success)] h-8 w-8">
-                          <MessageCircle className="w-4 h-4" />
-                        </Button>
+                        {/* View Button */}
+                        <Link href={`/leads/${lead.id}`} title="View Details">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-[var(--color-primary-gold)] hover:bg-[var(--color-primary-gold)]/10 h-8 w-8 transition-all"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </Link>
+
+                        {/* Call Button */}
+                        {lead.phone && (
+                          <a href={`tel:${lead.phone}`} title="Call Lead">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-blue-500 hover:bg-blue-500/10 h-8 w-8 transition-all"
+                            >
+                              <Phone className="w-4 h-4" />
+                            </Button>
+                          </a>
+                        )}
+
+                        {/* Email Button */}
+                        {lead.email && (
+                          <a href={`mailto:${lead.email}`} title="Send Email">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-cyan-500 hover:bg-cyan-500/10 h-8 w-8 transition-all"
+                            >
+                              <Mail className="w-4 h-4" />
+                            </Button>
+                          </a>
+                        )}
+
+                        {/* WhatsApp Button */}
+                        {lead.phone && (
+                          <a 
+                            href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Send WhatsApp Message"
+                          >
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-green-500 hover:bg-green-500/10 h-8 w-8 transition-all"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                            </Button>
+                          </a>
+                        )}
+
+                        {/* Delete Button */}
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="text-[var(--color-danger)] h-8 w-8"
+                          className="text-red-500 hover:bg-red-500/10 h-8 w-8 transition-all"
                           onClick={() => deleteLead.mutate(lead.id)}
                           disabled={deleteLead.isPending}
+                          title="Delete Lead"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

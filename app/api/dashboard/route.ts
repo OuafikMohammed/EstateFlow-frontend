@@ -44,30 +44,27 @@ export async function GET(request: NextRequest) {
       .select('id', { count: 'exact', head: true })
       .eq('company_id', companyId)
 
-    // Fetch total leads
+    // Fetch total leads with status breakdown using separate queries
     const { count: totalLeads } = await supabase
       .from('leads')
-      .select('id', { count: 'exact', head: true })
+      .select('id', { count: 'exact' })
       .eq('company_id', companyId)
 
-    // Fetch not contacted leads (status = 'new')
     const { count: notContactedLeads } = await supabase
       .from('leads')
-      .select('id', { count: 'exact', head: true })
+      .select('id', { count: 'exact' })
       .eq('company_id', companyId)
       .eq('status', 'new')
 
-    // Fetch contacted leads (status != 'new' and not closed)
     const { count: contactedLeads } = await supabase
       .from('leads')
-      .select('id', { count: 'exact', head: true })
+      .select('id', { count: 'exact' })
       .eq('company_id', companyId)
       .in('status', ['contacted', 'qualified', 'proposal_sent', 'negotiating'])
 
-    // Fetch closed won leads (deal made)
     const { count: closedWonLeads } = await supabase
       .from('leads')
-      .select('id', { count: 'exact', head: true })
+      .select('id', { count: 'exact' })
       .eq('company_id', companyId)
       .eq('status', 'closed_won')
 
@@ -98,7 +95,7 @@ export async function GET(request: NextRequest) {
       total_revenue: totalRevenue,
     }
 
-    return createSecureResponse({ success: true, data: stats })
+    return createSecureResponse(stats)
   } catch (error: unknown) {
     console.error('Dashboard stats error:', error)
     return createErrorResponse('Failed to fetch dashboard stats', 500)

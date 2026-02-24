@@ -8,9 +8,9 @@ import { createClient } from '@/lib/supabase/server'
 import { createErrorResponse, createSecureResponse } from '@/lib/security/security-utils'
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 /**
@@ -19,6 +19,8 @@ interface RouteParams {
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params
+
     const supabase = await createClient(request)
 
     // Get current user
@@ -30,8 +32,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     if (authError || !user) {
       return createErrorResponse('Unauthorized', 401)
     }
-
-    const { id } = params
 
     if (!id) {
       return createErrorResponse('Lead ID is required', 400)
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return createErrorResponse('Lead not found', 404)
     }
 
-    return createSecureResponse({ success: true, data: lead })
+    return createSecureResponse(lead)
   } catch (error: unknown) {
     console.error('Unexpected error:', error)
     return createErrorResponse('An unexpected error occurred', 500)
@@ -73,7 +73,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return createErrorResponse('Unauthorized', 401)
     }
 
-    const { id } = params
+    const { id } = await params
 
     if (!id) {
       return createErrorResponse('Lead ID is required', 400)
@@ -98,7 +98,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return createErrorResponse('Lead not found', 404)
     }
 
-    return createSecureResponse({ success: true, data: lead })
+    return createSecureResponse(lead)
   } catch (error: unknown) {
     console.error('Unexpected error:', error)
     return createErrorResponse('An unexpected error occurred', 500)
@@ -123,7 +123,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       return createErrorResponse('Unauthorized', 401)
     }
 
-    const { id } = params
+    const { id } = await params
 
     if (!id) {
       return createErrorResponse('Lead ID is required', 400)
@@ -140,7 +140,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       return createErrorResponse('Failed to delete lead', 500)
     }
 
-    return createSecureResponse({ success: true, data: { id } })
+    return createSecureResponse({ success: true })
   } catch (error: unknown) {
     console.error('Unexpected error:', error)
     return createErrorResponse('An unexpected error occurred', 500)

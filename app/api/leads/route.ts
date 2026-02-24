@@ -51,16 +51,19 @@ export async function GET(request: NextRequest) {
     const sortOrder = (searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc'
     const q = searchParams.get('q')
 
-    // Get user's company
+    // Get user's company and role
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('company_id')
+      .select('company_id, role')
       .eq('id', user.id)
       .single()
 
     if (profileError || !profile?.company_id) {
+      console.error('Profile fetch error:', profileError)
       return createErrorResponse('User company not found', 400)
     }
+
+    console.log('User profile:', { userId: user.id, company_id: profile.company_id, role: profile.role })
 
     let query = supabase
       .from('leads')
@@ -76,9 +79,11 @@ export async function GET(request: NextRequest) {
       query = query.eq('assigned_to', assignedTo)
     }
 
+    // Build search filter with proper Supabase syntax
     if (q) {
+      console.log('Searching for:', q)
       query = query.or(
-        `first_name.ilike.%${q}%,last_name.ilike.%${q}%,email.ilike.%${q}%`,
+        `first_name.ilike.%${q}%,last_name.ilike.%${q}%,email.ilike.%${q}%,phone.ilike.%${q}%`
       )
     }
 
@@ -89,18 +94,18 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Leads fetch error:', error)
+      console.error('Search query was:', q)
       return createErrorResponse('Failed to fetch leads', 500)
     }
 
+    console.log('Fetched leads count:', count, 'page:', page, 'limit:', limit, 'results:', leads?.length)
+
     return createSecureResponse({
-      success: true,
-      data: {
-        items: leads || [],
-        total: count || 0,
-        page,
-        limit,
-        pages: Math.ceil((count || 0) / limit),
-      },
+      items: leads || [],
+      total: count || 0,
+      page,
+      limit,
+      pages: Math.ceil((count || 0) / limit),
     })
   } catch (error: unknown) {
     console.error('Unexpected error:', error)
@@ -110,52 +115,102 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/leads
- * Create new lead - supports both public inquiries and authenticated users
+ * Create new lead
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check rate limit
+    const rateLimitResponse = leadsLimiter(request)
+    if (rateLimitResponse) {
+      return rateLimitResponse
+    }
+
     const supabase = await createClient(request)
+
+    // Get current user
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      console.error('Auth error:', authError)
+      return createErrorResponse('Unauthorized', 401)
+    }
+
+    // Get user's company
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('company_id')
+      .eq('id', user.id)
+      .single()
+
+    if (profileError || !profile?.company_id) {
+      console.error('Profile error:', profileError)
+      return createErrorResponse('User company not found', 400)
+    }
 
     // Parse request body
     const body = await request.json()
+    console.log('Received lead data:', body)
 
-    console.log('Creating lead with data:', body)
-
-    // Extract lead data - supports both formats
+    // Extract and validate lead data
     const leadData = {
-      name: body.name || body.first_name || '',
-      phone: body.phone || '',
-      email: body.email || '',
-      message: body.message || '',
-      property_id: body.property_id || null,
+      first_name: body.first_name?.trim() || '',
+      last_name: body.last_name?.trim() || '',
+      email: body.email?.trim() || '',
+      phone: body.phone?.trim() || '',
       status: body.status || 'new',
-      company_id: body.company_id || '00000000-0000-0000-0000-000000000001',
-      created_at: new Date().toISOString(),
+      interested_types: body.preferred_property_type ? [body.preferred_property_type] : [],
+      preferred_cities: body.preferred_location ? [body.preferred_location] : [],
+      budget_min: body.budget_min || null,
+      budget_max: body.budget_max || null,
+      notes: body.notes || null,
+      company_id: profile.company_id,
+      created_by: user.id,
+      assigned_to: null,
     }
+
+    console.log('Lead data to insert:', leadData)
 
     // Validate required fields
-    if (!leadData.name || !leadData.phone || !leadData.email) {
-      return createErrorResponse('name, phone, and email are required', 400)
+    if (!leadData.first_name || !leadData.last_name || !leadData.email || !leadData.phone) {
+      console.error('Validation error: Missing required fields', leadData)
+      return createErrorResponse('First name, last name, email, and phone are required', 400)
     }
 
-    console.log('Sanitized lead data:', leadData)
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(leadData.email)) {
+      console.error('Invalid email format:', leadData.email)
+      return createErrorResponse('Invalid email format', 400)
+    }
 
-    // Insert lead
+    // Validate budget if provided
+    if (leadData.budget_min && leadData.budget_max && leadData.budget_min > leadData.budget_max) {
+      console.error('Invalid budget range:', leadData.budget_min, leadData.budget_max)
+      return createErrorResponse('Minimum budget cannot be greater than maximum budget', 400)
+    }
+
+    // Insert lead into database
     const { data: lead, error: createError } = await supabase
       .from('leads')
-      .insert(leadData)
+      .insert([leadData])
       .select()
       .single()
 
     if (createError) {
-      console.error('Lead creation error:', createError)
-      return createErrorResponse(`Failed to create lead: ${createError.message}`, 500)
+      console.error('Supabase insert error:', createError)
+      return createErrorResponse(
+        `Failed to create lead: ${createError.message}`,
+        500
+      )
     }
 
     console.log('Lead created successfully:', lead)
     return createSecureResponse({ success: true, data: lead }, 201)
   } catch (error: unknown) {
-    console.error('Unexpected error:', error)
+    console.error('Unexpected error in POST /api/leads:', error)
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
     return createErrorResponse(errorMessage, 500)
   }

@@ -357,6 +357,25 @@ export function useRecentLeads(limit: number = 5) {
 }
 
 /**
+ * Fetch detailed analytics
+ */
+export function useAnalytics() {
+  return useQuery({
+    queryKey: ['analytics'],
+    queryFn: async () => {
+      const response = await fetch('/api/analytics')
+      if (!response.ok) {
+        throw new Error('Failed to fetch analytics')
+      }
+      return response.json()
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnMount: true,
+  })
+}
+
+/**
  * User Profile Hooks
  */
 
