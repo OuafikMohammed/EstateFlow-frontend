@@ -14,7 +14,7 @@ export default function Logo({ size = "md", className = "" }: LogoProps) {
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg p-1.5">
+      <div className="bg-gradient-to-br from-[#C9A84C] to-[#1b4332] rounded-lg p-1.5">
         <Building2 className={`${sizeMap[size]} text-white`} />
       </div>
     </div>

@@ -47,7 +47,20 @@ export async function GET(request: NextRequest) {
         )
       }
 
-      // Success - redirect to dashboard
+      // Success - check if profile and company exist
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', (await supabase.auth.getUser()).data.user?.id)
+        .single()
+
+      if (!profile?.company_id) {
+        // New user or incomplete profile - redirect to onboarding
+        console.log('[AUTH CALLBACK] No company found, redirecting to onboarding')
+        return NextResponse.redirect(new URL('/onboarding', requestUrl.origin))
+      }
+
+      // Existing user with company - redirect to dashboard
       return NextResponse.redirect(new URL('/dashboard', requestUrl.origin))
     } catch (err) {
       console.error('[CALLBACK ERROR]', err)

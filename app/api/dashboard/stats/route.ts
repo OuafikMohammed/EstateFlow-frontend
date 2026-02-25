@@ -28,8 +28,14 @@ export async function GET(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    if (profileError || !profile?.company_id) {
-      return createErrorResponse('User company not found', 400)
+    if (profileError) {
+      console.error('[DASHBOARD STATS] Profile fetch error:', profileError)
+      return createErrorResponse('User profile not found', 404)
+    }
+
+    if (!profile?.company_id) {
+      console.warn('[DASHBOARD STATS] User has no company_id:', user.id)
+      return createErrorResponse('User company not found. Please complete onboarding.', 400)
     }
 
     const companyId = profile.company_id

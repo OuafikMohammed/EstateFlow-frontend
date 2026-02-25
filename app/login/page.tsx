@@ -2,42 +2,27 @@
 
 import React from 'react'
 import { SecureLoginForm } from '@/components/auth/secure-login-form'
-import Logo from '@/components/logo'
-import Link from 'next/link'
+import { GoldParticles } from '@/components/auth/gold-particles'
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Logo size="lg" className="mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white">EstateFlow</h1>
-          <p className="text-slate-400 mt-1">Premium Real Estate Management</p>
-        </div>
+    <div className="min-h-screen bg-[#080808] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Gold Particle Background */}
+      <GoldParticles particleCount={50} maxLinkDistance={130} />
 
-        {/* Login Form Component */}
+      {/* Glow orbs for depth */}
+      <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px]
+                      rounded-full bg-[#C9A84C]/[0.03] blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px]
+                      rounded-full bg-[#C9A84C]/[0.02] blur-[80px] pointer-events-none" />
+
+      {/* Login Form */}
+      <div className="relative z-10">
         <SecureLoginForm
           onSuccess={() => {
-            // Component handles redirect to dashboard
             console.log('Login successful')
           }}
         />
-
-        {/* Footer Links */}
-        <div className="mt-6 space-y-2 text-center text-sm">
-          <div className="text-slate-400">
-            Don't have an account?{' '}
-            <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-medium">
-              Create one
-            </Link>
-          </div>
-          <div className="text-slate-400">
-            <Link href="#" className="text-blue-400 hover:text-blue-300 font-medium">
-              Forgot your password?
-            </Link>
-          </div>
-        </div>
       </div>
     </div>
   )

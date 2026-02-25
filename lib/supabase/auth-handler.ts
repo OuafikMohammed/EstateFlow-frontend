@@ -62,8 +62,8 @@ export async function signUpUser(data: SignUpData) {
 
     if (authError || !authData.user) {
       // Check for specific error types
-      if (authError?.message.includes('already registered')) {
-        throw new Error('Email already registered. Please sign in instead.')
+      if (authError?.message.includes('already signed up')) {
+        throw new Error('Email already signed up. Please sign in instead.')
       }
       if (authError?.message.includes('Invalid API key') || authError?.message.includes('invalid')) {
         throw new Error('Database connection error - Invalid API key. Please check your Supabase configuration.')

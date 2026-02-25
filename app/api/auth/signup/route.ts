@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     // In production, only expose known safe errors
     const knownErrors = [
-      'Email already registered',
+      'Email already signed up',
       'Please confirm your email',
       'Invalid email',
       'Password must be',

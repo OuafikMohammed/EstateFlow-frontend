@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Upload, ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, Mail, Users } from 'lucide-react'
+import { Upload, ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, Mail, Users, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface OnboardingStep {
@@ -43,23 +43,23 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
   const steps: OnboardingStep[] = [
     {
       id: 'logo',
-      title: 'Company Logo',
-      description: 'Upload your company logo for branding',
-      icon: <Upload className="w-6 h-6" />,
+      title: 'Brand Identity',
+      description: 'Upload your company logo to define your presence',
+      icon: <Upload className="w-5 h-5" />,
       completed: logoFile !== null,
     },
     {
       id: 'details',
-      title: 'Company Details',
-      description: 'Tell us more about your organization',
-      icon: <AlertCircle className="w-6 h-6" />,
+      title: 'Organization',
+      description: 'Tell us about your prestigious firm',
+      icon: <AlertCircle className="w-5 h-5" />,
       completed: !!(companyDetails.industry && companyDetails.teamSize),
     },
     {
       id: 'invite',
-      title: 'Invite Team Member',
-      description: 'Optionally invite your first team member',
-      icon: <Users className="w-6 h-6" />,
+      title: 'Collaboration',
+      description: 'Invite your elite team members',
+      icon: <Users className="w-5 h-5" />,
       completed: inviteEmail !== '',
     },
   ]
@@ -67,22 +67,16 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
   const handleLogoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         setError('Please select a valid image file')
         return
       }
-
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError('File size must be less than 5MB')
         return
       }
-
       setLogoFile(file)
       setError(null)
-
-      // Create preview
       const reader = new FileReader()
       reader.onloadend = () => {
         setLogoPreview(reader.result as string)
@@ -95,7 +89,6 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
     } else {
-      // Complete onboarding
       await completeOnboarding()
     }
   }
@@ -108,27 +101,12 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
   const completeOnboarding = async () => {
     setLoading(true)
     setError(null)
-
     try {
       const formData = new FormData()
-
-      // Add user email for unauthenticated new user verification
-      if (userEmail) {
-        formData.append('userEmail', userEmail)
-      }
-
-      // Add logo if present
-      if (logoFile) {
-        formData.append('logo', logoFile)
-      }
-
-      // Add company details
+      if (userEmail) formData.append('userEmail', userEmail)
+      if (logoFile) formData.append('logo', logoFile)
       formData.append('companyDetails', JSON.stringify(companyDetails))
-
-      // Add invite email if present
-      if (inviteEmail) {
-        formData.append('inviteEmail', inviteEmail)
-      }
+      if (inviteEmail) formData.append('inviteEmail', inviteEmail)
 
       const response = await fetch('/api/onboarding/complete', {
         method: 'POST',
@@ -138,21 +116,11 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
 
       if (!response.ok) {
         const data = await response.json()
-        const errorMessage = data.message || `Server error: ${response.statusText}`
-        console.error('[ONBOARDING API ERROR]', {
-          status: response.status,
-          message: errorMessage,
-          data,
-        })
-        throw new Error(errorMessage)
+        throw new Error(data.message || `Server error: ${response.statusText}`)
       }
-
-      // Redirect to dashboard
       router.push('/dashboard')
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-      setError(errorMessage)
-      console.error('[ONBOARDING ERROR]', err)
+      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
     }
@@ -161,24 +129,20 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault()
     setInviteError(null)
-
     if (!inviteEmail || !inviteEmail.includes('@')) {
       setInviteError('Please enter a valid email address')
       return
     }
-
     try {
       const response = await fetch('/api/onboarding/send-invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: inviteEmail }),
       })
-
       if (!response.ok) {
         const data = await response.json()
         throw new Error(data.message || 'Failed to send invite')
       }
-
       setInviteEmail('')
       setInviteError(null)
     } catch (err) {
@@ -189,117 +153,129 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
   const progressPercentage = ((currentStep + 1) / steps.length) * 100
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome to EstateFlow</h1>
-          <p className="text-slate-400">
-            Let's set up your {companyName} workspace in a few quick steps
-          </p>
+    <div className="w-full max-w-2xl mx-auto py-8 px-4">
+      {/* Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-10 text-center"
+      >
+        <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">
+          Welcome to <span className="bg-gradient-to-r from-[#C9A84C] via-[#F1DB9D] to-[#C9A84C] bg-clip-text text-transparent">EstateFlow</span>
+        </h1>
+        <p className="text-white/60 text-lg">
+          Elevating the {companyName} experience, one step at a time.
+        </p>
+      </motion.div>
+
+      {/* Progress & Steps Tracker */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-white/80 font-medium">
+            Phases of Onboarding: <span className="text-[#C9A84C]">{currentStep + 1} / {steps.length}</span>
+          </h2>
+          <button
+            onClick={handleSkip}
+            className="text-sm text-white/40 hover:text-[#C9A84C] transition-colors"
+          >
+            Skip for now
+          </button>
         </div>
 
-        {/* Progress Indicator */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-white font-semibold">
-              Step {currentStep + 1} of {steps.length}
-            </h2>
-            <button
-              onClick={handleSkip}
-              className="text-sm text-slate-400 hover:text-slate-300"
-            >
-              Skip for now
-            </button>
-          </div>
+        {/* Integrated Progress Bar and Step Indicators */}
+        <div className="relative mb-12">
+          {/* Background Track */}
+          <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/5 -translate-y-1/2" />
+          
+          {/* Active Track */}
+          <motion.div 
+            className="absolute top-1/2 left-0 h-[2px] bg-gradient-to-r from-[#C9A84C] to-[#E5C767] -translate-y-1/2 z-10"
+            initial={{ width: 0 }}
+            animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+            transition={{ duration: 0.8, ease: "circOut" }}
+          />
 
-          {/* Progress Bar */}
-          <div className="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
-            <motion.div
-              initial={{ width: '0%' }}
-              animate={{ width: `${progressPercentage}%` }}
-              transition={{ duration: 0.5, ease: 'easeInOut' }}
-              className="h-full bg-gradient-to-r from-blue-500 to-blue-600"
-            />
-          </div>
-        </div>
-
-        {/* Steps Overview */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          {steps.map((step, index) => (
-            <div
-              key={step.id}
-              onClick={() => {
-                if (index <= currentStep) {
-                  setCurrentStep(index)
-                }
-              }}
-              className={`p-4 rounded-lg cursor-pointer transition-all ${
-                index === currentStep
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : index < currentStep
-                    ? 'bg-green-600/20 text-green-300 border border-green-500/30'
-                    : 'bg-slate-700 text-slate-400'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                {index < currentStep ? <CheckCircle2 className="w-4 h-4" /> : step.icon}
-              </div>
-              <p className="text-sm font-medium mt-2">{step.title}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Content Area */}
-        <Card className="border-0 shadow-lg overflow-hidden">
-          <div className="p-8">
-            <AnimatePresence mode="wait">
-              {currentStep === 0 && (
+          {/* Step Nodes */}
+          <div className="relative z-20 flex justify-between">
+            {steps.map((step, index) => (
+              <div key={step.id} className="flex flex-col items-center">
                 <motion.div
-                  key="logo"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-6"
+                  onClick={() => index <= currentStep && setCurrentStep(index)}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border-2 transition-all duration-500 ${
+                    index < currentStep
+                      ? 'bg-[#C9A84C] border-[#C9A84C] text-black shadow-[0_0_15px_rgba(201,168,76,0.3)]'
+                      : index === currentStep
+                      ? 'bg-black border-[#C9A84C] text-[#C9A84C] shadow-[0_0_20px_rgba(201,168,76,0.2)]'
+                      : 'bg-[#121212] border-white/10 text-white/20'
+                  }`}
+                  whileHover={index <= currentStep ? { scale: 1.1 } : {}}
                 >
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                      {steps[0].title}
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      {steps[0].description}
-                    </p>
-                  </div>
+                  {index < currentStep ? <CheckCircle2 className="w-5 h-5" /> : step.icon}
+                </motion.div>
+                <span className={`text-[10px] mt-2 font-semibold uppercase tracking-widest ${
+                  index <= currentStep ? 'text-[#C9A84C]' : 'text-white/20'
+                }`}>
+                  {step.title}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-                  <div className="space-y-4">
+      {/* Content Area */}
+      <Card className="bg-black/40 backdrop-blur-xl border border-[#C9A84C]/20 shadow-2xl overflow-hidden rounded-2xl relative">
+        {/* Decorative corner accents */}
+        <div className="absolute top-0 right-0 w-24 h-24 bg-[#C9A84C]/5 blur-3xl rounded-full" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#C9A84C]/5 blur-3xl rounded-full" />
+
+        <div className="p-8 md:p-12">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={steps[currentStep].id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="space-y-8"
+            >
+              <div className="text-center md:text-left">
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  {steps[currentStep].title}
+                </h3>
+                <p className="text-white/50">
+                  {steps[currentStep].description}
+                </p>
+              </div>
+
+              <div className="min-h-[220px]">
+                {currentStep === 0 && (
+                  <div className="space-y-6">
                     {logoPreview ? (
-                      <div className="relative">
+                      <div className="flex flex-col items-center justify-center p-8 bg-white/5 rounded-xl border border-white/10">
                         <img
                           src={logoPreview}
                           alt="Logo preview"
-                          className="max-h-40 mx-auto rounded-lg object-contain"
+                          className="max-h-40 rounded-lg object-contain shadow-2xl"
                         />
                         <button
                           onClick={() => {
                             setLogoFile(null)
                             setLogoPreview(null)
                           }}
-                          className="mt-4 text-sm text-slate-600 hover:text-slate-900 dark:hover:text-slate-300"
+                          className="mt-6 text-sm text-[#C9A84C] hover:text-[#E5C767] font-medium transition-colors"
                         >
-                          Choose Different File
+                          Change Logo Image
                         </button>
                       </div>
                     ) : (
-                      <label className="flex items-center justify-center w-full p-8 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                        <div className="flex flex-col items-center">
-                          <Upload className="w-8 h-8 text-slate-400 mb-2" />
-                          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                            Click to upload or drag and drop
-                          </span>
-                          <span className="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                            PNG, JPG or SVG (max 5MB)
-                          </span>
+                      <label className="group block relative cursor-pointer">
+                        <div className="flex flex-col items-center justify-center w-full p-12 border-2 border-dashed border-white/10 rounded-2xl bg-white/[0.02] group-hover:bg-white/[0.04] group-hover:border-[#C9A84C]/30 transition-all duration-300">
+                          <div className="w-16 h-16 bg-[#C9A84C]/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
+                            <Upload className="w-8 h-8 text-[#C9A84C]" />
+                          </div>
+                          <span className="text-white/80 font-medium mb-1">Upload your brand mark</span>
+                          <span className="text-white/30 text-xs">PNG, JPG or SVG (max 5MB)</span>
                         </div>
                         <input
                           type="file"
@@ -310,196 +286,149 @@ export function OnboardingWizard({ userEmail, companyName }: OnboardingWizardPro
                       </label>
                     )}
                   </div>
-                </motion.div>
-              )}
+                )}
 
-              {currentStep === 1 && (
-                <motion.div
-                  key="details"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-6"
-                >
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                      {steps[1].title}
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      {steps[1].description}
-                    </p>
-                  </div>
-
-                  <form className="space-y-4">
-                    <div>
-                      <Label htmlFor="industry">Industry</Label>
+                {currentStep === 1 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="industry" className="text-white/60 ml-1">Industry</Label>
                       <Input
                         id="industry"
-                        placeholder="e.g., Real Estate, Finance, Hospitality"
+                        placeholder="e.g., Luxury Real Estate"
                         value={companyDetails.industry}
-                        onChange={(e) =>
-                          setCompanyDetails({
-                            ...companyDetails,
-                            industry: e.target.value,
-                          })
-                        }
+                        onChange={(e) => setCompanyDetails({ ...companyDetails, industry: e.target.value })}
+                        className="bg-white/5 border-white/10 focus:border-[#C9A84C] focus:ring-[#C9A84C]/20 text-white h-12"
                       />
                     </div>
-
-                    <div>
-                      <Label htmlFor="teamSize">Team Size</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="teamSize" className="text-white/60 ml-1">Team Size</Label>
                       <select
                         id="teamSize"
                         value={companyDetails.teamSize}
-                        onChange={(e) =>
-                          setCompanyDetails({
-                            ...companyDetails,
-                            teamSize: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 border rounded-lg dark:bg-slate-800 dark:border-slate-600"
+                        onChange={(e) => setCompanyDetails({ ...companyDetails, teamSize: e.target.value })}
+                        className="w-full h-12 px-4 rounded-md bg-white/5 border border-white/10 focus:border-[#C9A84C] focus:ring-[#C9A84C]/20 text-white outline-none transition-all"
                       >
-                        <option value="">Select team size</option>
-                        <option value="1-5">1-5 people</option>
-                        <option value="6-20">6-20 people</option>
-                        <option value="21-50">21-50 people</option>
-                        <option value="51+">51+ people</option>
+                        <option value="" className="bg-[#121212]">Select range</option>
+                        <option value="1-5" className="bg-[#121212]">1-5 Associates</option>
+                        <option value="6-20" className="bg-[#121212]">6-20 Professionals</option>
+                        <option value="21-50" className="bg-[#121212]">21-50 Firm Members</option>
+                        <option value="51+" className="bg-[#121212]">51+ Enterprise</option>
                       </select>
                     </div>
-
-                    <div>
-                      <Label htmlFor="phone">Phone Number</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-white/60 ml-1">International Phone</Label>
                       <Input
                         id="phone"
                         type="tel"
                         placeholder="+1 (555) 000-0000"
                         value={companyDetails.phone}
-                        onChange={(e) =>
-                          setCompanyDetails({
-                            ...companyDetails,
-                            phone: e.target.value,
-                          })
-                        }
+                        onChange={(e) => setCompanyDetails({ ...companyDetails, phone: e.target.value })}
+                        className="bg-white/5 border-white/10 focus:border-[#C9A84C] focus:ring-[#C9A84C]/20 text-white h-12"
                       />
                     </div>
-
-                    <div>
-                      <Label htmlFor="address">Address</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="address" className="text-white/60 ml-1">HQ Address</Label>
                       <Input
                         id="address"
-                        placeholder="Your company address"
+                        placeholder="Global headquarters address"
                         value={companyDetails.address}
-                        onChange={(e) =>
-                          setCompanyDetails({
-                            ...companyDetails,
-                            address: e.target.value,
-                          })
-                        }
+                        onChange={(e) => setCompanyDetails({ ...companyDetails, address: e.target.value })}
+                        className="bg-white/5 border-white/10 focus:border-[#C9A84C] focus:ring-[#C9A84C]/20 text-white h-12"
                       />
                     </div>
-                  </form>
-                </motion.div>
-              )}
-
-              {currentStep === 2 && (
-                <motion.div
-                  key="invite"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-6"
-                >
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                      {steps[2].title}
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      {steps[2].description}
-                    </p>
                   </div>
+                )}
 
-                  <form onSubmit={handleInvite} className="space-y-4">
-                    <div>
-                      <Label htmlFor="inviteEmail">Team Member Email</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="inviteEmail"
-                          type="email"
-                          placeholder="colleague@company.com"
-                          value={inviteEmail}
-                          onChange={(e) => setInviteEmail(e.target.value)}
-                        />
-                        <Button
-                          type="submit"
-                          variant="outline"
-                          disabled={!inviteEmail || loading}
-                        >
-                          Send Invite
-                        </Button>
+                {currentStep === 2 && (
+                  <div className="space-y-6">
+                    <form onSubmit={handleInvite} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="inviteEmail" className="text-white/60 ml-1">Core Team Member Email</Label>
+                        <div className="flex gap-3">
+                          <Input
+                            id="inviteEmail"
+                            type="email"
+                            placeholder="colleague@estateflow.com"
+                            value={inviteEmail}
+                            onChange={(e) => setInviteEmail(e.target.value)}
+                            className="bg-white/5 border-white/10 focus:border-[#C9A84C] focus:ring-[#C9A84C]/20 text-white h-12"
+                          />
+                          <Button
+                            type="submit"
+                            disabled={!inviteEmail || loading}
+                            className="h-12 px-6 bg-[#C9A84C]/10 text-[#C9A84C] border border-[#C9A84C]/20 hover:bg-[#C9A84C] hover:text-black transition-all duration-300"
+                          >
+                            Send Invite
+                          </Button>
+                        </div>
+                        {inviteError && (
+                          <p className="text-sm text-red-500 mt-2 ml-1 flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" /> {inviteError}
+                          </p>
+                        )}
                       </div>
-                      {inviteError && (
-                        <p className="text-sm text-red-600 dark:text-red-400 mt-2">
-                          {inviteError}
-                        </p>
-                      )}
+                    </form>
+
+                    <div className="p-4 bg-[#C9A84C]/5 rounded-xl border border-[#C9A84C]/10 flex items-start gap-4">
+                      <div className="w-8 h-8 rounded-full bg-[#C9A84C]/10 flex items-center justify-center shrink-0">
+                        <span className="text-[#C9A84C] text-lg italic font-serif">i</span>
+                      </div>
+                      <p className="text-sm text-white/50 leading-relaxed pt-1">
+                        EstateFlow thrives on collaboration. You can invite additional team members and manage sophisticated access controls within your dashboard settings.
+                      </p>
                     </div>
-                  </form>
-
-                  <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <p className="text-sm text-slate-700 dark:text-slate-300">
-                      💡 Tip: You can add team members anytime from the settings page.
-                    </p>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
 
-            {error && (
-              <Alert variant="destructive" className="mt-6">
+          {error && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-8">
+              <Alert variant="destructive" className="bg-red-500/10 border-red-500/20 text-red-400">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
-            )}
+            </motion.div>
+          )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-4 mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
-              <Button
-                variant="outline"
-                onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-                disabled={currentStep === 0 || loading}
-              >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-
-              <Button
-                onClick={handleNext}
-                disabled={loading}
-                className="ml-auto"
-              >
-                {currentStep === steps.length - 1 ? 'Get Started' : 'Continue'}
-                {currentStep < steps.length - 1 && (
-                  <ChevronRight className="w-4 h-4 ml-2" />
-                )}
-              </Button>
-            </div>
-          </div>
-        </Card>
-
-        {/* Skip Link */}
-        {!skipped && currentStep === 0 && (
-          <div className="text-center mt-6">
-            <button
-              onClick={handleSkip}
-              disabled={loading}
-              className="text-slate-400 hover:text-slate-300 text-sm"
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between mt-12 pt-8 border-t border-white/5">
+            <Button
+              variant="ghost"
+              onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+              disabled={currentStep === 0 || loading}
+              className="text-white/40 hover:text-white hover:bg-white/5 disabled:opacity-0"
             >
-              Skip setup and go to dashboard
-            </button>
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Previous Phase
+            </Button>
+
+            <Button
+              onClick={handleNext}
+              disabled={loading}
+              className="bg-gradient-to-r from-[#C9A84C] to-[#E5C767] text-black font-bold h-12 px-8 rounded-full shadow-[0_4px_15px_rgba(201,168,76,0.2)] hover:shadow-[0_4px_25px_rgba(201,168,76,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+            >
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  {currentStep === steps.length - 1 ? 'Enter Workspace' : 'Continue Experience'}
+                  {currentStep < steps.length - 1 && (
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  )}
+                </>
+              )}
+            </Button>
           </div>
-        )}
+        </div>
+      </Card>
+      
+      {/* Footer Branding */}
+      <div className="mt-8 text-center opacity-30 flex items-center justify-center gap-2">
+        <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-white" />
+        <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-white">The Gold Standard</span>
+        <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-white" />
       </div>
     </div>
   )

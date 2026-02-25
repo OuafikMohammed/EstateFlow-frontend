@@ -73,6 +73,7 @@ CREATE TABLE public.companies (
   zip_code VARCHAR(10),
   country VARCHAR(100),
   timezone VARCHAR(50) DEFAULT 'UTC',
+  created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   
@@ -81,6 +82,7 @@ CREATE TABLE public.companies (
 
 -- Create index on companies
 CREATE INDEX idx_companies_name ON public.companies(name);
+CREATE INDEX idx_companies_created_by ON public.companies(created_by);
 
 -- Step 4: Create PROFILES table (extends auth.users)
 -- ============================================================================
@@ -392,7 +394,11 @@ CREATE POLICY "Authenticated users can create companies"
   WITH CHECK (true);
 
 -- PROFILES: Users can view their company's profiles, company_admin manages, super_admin sees all
-CREATE POLICY "Users can view own company profiles"
+CREATE POLICY "Users can view their own profile"
+  ON public.profiles FOR SELECT
+  USING (id = auth.uid());
+
+CREATE POLICY "Users can view company profiles"
   ON public.profiles FOR SELECT
   USING (
     (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'super_admin' OR

@@ -1,11 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { OnboardingWizard } from '@/components/onboarding/onboarding-wizard'
 import { createClient } from '@/lib/supabase/client'
+import { GoldAurora } from '@/components/auth/gold-aurora'
+import { Loader2 } from 'lucide-react'
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -62,7 +64,9 @@ export default function OnboardingPage() {
 
         if (companyData) {
           setCompany(companyData)
-        } else if (!companyFromParams) {
+        } else if (companyFromParams) {
+          setCompany({ name: companyFromParams })
+        } else {
           // If no company was fetched and no company from params, set error
           console.warn('[COMPANY DATA WARNING] No company found for user and no company from params')
         }
@@ -79,27 +83,23 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-          <p className="text-slate-400 mt-4">Loading onboarding...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="h-12 w-12 text-[#C9A84C] animate-spin" />
+        <p className="text-[#C9A84C]/80 font-medium animate-pulse">Initializing your luxury workspace...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-        <div className="text-center">
-          <p className="text-red-400 mb-4">{error}</p>
-          <button
-            onClick={() => router.push('/')}
-            className="text-blue-400 hover:text-blue-300"
-          >
-            Return to home
-          </button>
-        </div>
+      <div className="text-center p-8 bg-black/40 backdrop-blur-xl border border-red-500/20 rounded-2xl max-w-md w-full mx-auto relative z-10">
+        <p className="text-red-400 mb-6 font-medium">{error}</p>
+        <button
+          onClick={() => router.push('/')}
+          className="px-6 py-2 bg-gradient-to-r from-[#C9A84C] to-[#E5C767] text-black font-semibold rounded-lg hover:shadow-[0_0_20px_rgba(201,168,76,0.4)] transition-all duration-300"
+        >
+          Return to home
+        </button>
       </div>
     )
   }
@@ -109,9 +109,41 @@ export default function OnboardingPage() {
   }
 
   return (
-    <OnboardingWizard
-      userEmail={user.email}
-      companyName={company?.name || 'Your Company'}
-    />
+    <div className="relative z-10 w-full">
+      <OnboardingWizard
+        userEmail={user.email}
+        companyName={company?.name || 'Your Company'}
+      />
+    </div>
+  )
+}
+
+export default function OnboardingPage() {
+  return (
+    <div className="min-h-screen bg-[#080808] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Gold Aurora Background */}
+      <GoldAurora />
+
+      {/* Subtle grid overlay */}
+      <div
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(201, 168, 76, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201, 168, 76, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px',
+        }}
+      />
+
+      <Suspense fallback={
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <Loader2 className="h-12 w-12 text-[#C9A84C] animate-spin" />
+          <p className="text-[#C9A84C]/80 font-medium">Preparing EstateFlow...</p>
+        </div>
+      }>
+        <OnboardingContent />
+      </Suspense>
+    </div>
   )
 }

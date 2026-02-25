@@ -217,15 +217,15 @@ export default function LandingPage() {
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
-          <Link href="/" className="relative h-32 sm:h-40 md:h-48 w-full max-w-lg">
-            <Image
-              src="/estateflow-logo.png"
-              alt="EstateFlow"
-              fill
-              className="object-contain"
-              priority
-            />
-          </Link>
+            <Link href="/" className="relative h-32 sm:h-40 md:h-48 w-full max-w-lg">
+              <Image
+                src="/estateflow-logo.png"
+                alt="EstateFlow"
+                fill
+                className="object-contain"
+                priority
+              />
+            </Link>
 
 
 
@@ -298,7 +298,7 @@ export default function LandingPage() {
                     <Link href="/login">Sign In</Link>
                   </Button>
                   <Button asChild>
-                    <Link href="/register">
+                    <Link href="/signup">
                       Get Started
                       <ChevronRight className="w-4 h-4 ml-1" />
                     </Link>
@@ -594,7 +594,7 @@ export default function LandingPage() {
                   </li>
                 </ul>
                 <Button variant="outline" className="w-full bg-transparent" asChild>
-                  <Link href="/register">Get Started</Link>
+                  <Link href="/signup">Get Started</Link>
                 </Button>
               </Card>
             </motion.div>
@@ -639,7 +639,7 @@ export default function LandingPage() {
                   </li>
                 </ul>
                 <Button className="w-full" asChild>
-                  <Link href="/register">Get Started</Link>
+                  <Link href="/signup">Get Started</Link>
                 </Button>
               </Card>
             </motion.div>
@@ -680,7 +680,7 @@ export default function LandingPage() {
                   </li>
                 </ul>
                 <Button variant="outline" className="w-full bg-transparent" asChild>
-                  <Link href="/register">Contact Sales</Link>
+                  <Link href="/signup">Contact Sales</Link>
                 </Button>
               </Card>
             </motion.div>
@@ -702,7 +702,7 @@ export default function LandingPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Button size="lg" className="text-lg px-8 h-14" asChild>
-                    <Link href="/register">
+                    <Link href="/signup">
                       Start Free Trial
                       <ChevronRight className="w-5 h-5 ml-2" />
                     </Link>

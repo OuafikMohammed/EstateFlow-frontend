@@ -39,7 +39,7 @@ export function RecentLeadsTable() {
       {/* Header */}
       <div className="bg-gradient-to-r from-[var(--color-bg-card)]/50 to-transparent p-6 border-b border-[var(--color-border)]/30">
         <h2 className="text-lg font-bold text-[var(--color-text-light)]">Recent Leads Added</h2>
-        <p className="text-sm text-[var(--color-muted-foreground)] mt-1">Latest clients registered in the system</p>
+        <p className="text-sm text-[var(--color-muted-foreground)] mt-1">Latest clients signed up in the system</p>
       </div>
 
       {isLoading ? (
