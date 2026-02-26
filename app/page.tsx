@@ -34,13 +34,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { LogoutButton } from "@/components/logout-button"
-
-interface UserProfile {
-  full_name?: string
-  email?: string
-  role?: string
-  company_id?: string
-}
+import { useSessionStore } from "@/store/session-store"
+import { ProfileDropdown } from "@/components/layout/profile-dropdown"
+import type { UserProfile } from "@/store/session-store"
 
 interface Company {
   id?: string
@@ -248,50 +244,7 @@ export default function LandingPage() {
               {loading ? (
                 <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
               ) : user && profile ? (
-                <div className="flex items-center gap-3">
-                  {/* User Info Card */}
-                  <Card className="hidden sm:flex items-center gap-3 px-4 py-2 bg-card border border-border">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-sm font-semibold">
-                      {getInitials(profile.full_name, profile.email)}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate">{profile.full_name || "User"}</p>
-                      <p className="text-xs text-muted-foreground truncate">{profile.role || "Agent"}</p>
-                    </div>
-                  </Card>
-
-                  {/* Profile Dropdown */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                      >
-                        <span className="text-white text-sm font-semibold">
-                          {getInitials(profile.full_name, profile.email)}
-                        </span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <div className="p-3 border-b border-border">
-                        <p className="text-sm font-semibold text-foreground">{profile.full_name || "User"}</p>
-                        <p className="text-xs text-muted-foreground">{profile.email}</p>
-                        {company && <p className="text-xs text-muted-foreground mt-1">{company.name}</p>}
-                      </div>
-                      <DropdownMenuItem asChild>
-                        <Link href="/settings" className="cursor-pointer">
-                          <Settings className="w-4 h-4 mr-2" />
-                          Settings
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <LogoutButton variant="ghost" size="sm" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950" showIcon={false} />
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+                <ProfileDropdown profile={profile as UserProfile} />
               ) : (
                 <>
                   <Button variant="ghost" asChild>

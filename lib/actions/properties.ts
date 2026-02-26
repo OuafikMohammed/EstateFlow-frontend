@@ -495,11 +495,21 @@ export async function searchProperties(
   page: number = 1
 ): Promise<ApiResult<{ items: Property[]; total: number; hasMore: boolean }>> {
   try {
-    return getProperties({
+    const result = await getProperties({
       ...filters,
       search: searchTerm,
       page,
       limit: 50,
+    })
+
+    if (!result.success) {
+      return result
+    }
+
+    return createSuccessResult({
+      items: result.data.items,
+      total: result.data.total,
+      hasMore: result.data.page < result.data.pages,
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
