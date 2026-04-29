@@ -1,7 +1,6 @@
 # 🏠 EstateFlow: Enterprise Real Estate CRM
 
-![EstateFlow Banner](C:\Users\PC G.M.T\.gemini\antigravity\brain\6db20182-e9ef-4f5d-928b-e809927a10e5\estateflow_banner_1777490253248.png)
-
+![Preview](public/estateflow-logo.png)
 ## 🌟 Mission & Vision
 
 **EstateFlow** is a modern, multi-tenant Real Estate CRM (Customer Relationship Management) platform designed to bridge the gap between agencies and their clients. It provides a central hub for managing properties, tracking leads, and scheduling showings with a focus on speed, transparency, and scalability.
